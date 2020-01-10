@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <modules>
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="11081" name="Fritz DECT200 (11081)" version="0.17">
+            <inputs>
+                <input type="string" const_name="sXML" init_value="">XML</input>
+				<input type="string" const_name="sSid" init_value="">SID</input>
+                <input type="string" const_name="sIp" init_value="">Fritzbox IP</input>				
+				<input type="string" const_name="sUserPw" init_value="">User@Passwort</input>
+				<input type="string" const_name="sAin" init_value="">AIN</input>
+                <input type="number" const_name="bOnOff" init_value="0">Ein/Aus</input>
+                <input type="number" const_name="nSidTimeout" init_value="480">Timeout SID</input>
+				<input type="number" const_name="nTrigger" init_value="0">Trigger</input>
+            </inputs>
+            <outputs>
+				<output type="number" const_name="bRmOnOff" init_value="0">RM Ein/Aus</output>
+				<output type="number" const_name="nMW" init_value="0">RM Akt. mW</output>
+				<output type="number" const_name="nZaehlerWh" init_value="0">RM Akt. Zaehlerst. Wh</output>
+				<output type="number" const_name="nTemp" init_value="0">RM Akt. Temp.</output>				
+                <output type="string" const_name="sSid" init_value="">SID</output>
+				<output type="string" const_name="sHtml" init_value="">XML</output>
+            </outputs>               
+			<remanent_variables>
+            </remanent_variables>
+            <imports>
+            </imports>		
+        </module>	
+    </modules>
+</config>

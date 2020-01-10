@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <modules>
+        <module category="Sonos" context="hsl20_3_SonosSpeaker" id="10034" name="SONOS Speaker (10034)" version="0.4">
+            <inputs>
+                <input type="string" const_name="sSpeakerIp" init_value="">Speaker IP</input>
+                <input type="number" const_name="nSpeakerPort" init_value="1400">Speaker Port</input>
+				<input type="number" const_name="nVolume" init_value="0">Volume</input>
+                <input type="number" const_name="bPlay" init_value="0">Play</input>
+                <input type="number" const_name="bPause" init_value="0">Pause</input>
+                <input type="number" const_name="bPrevious" init_value="0">Previous</input>
+                <input type="number" const_name="bNext" init_value="0">Next</input>
+				<input type="string" const_name="sPlaylist" init_value="">Playlist</input>
+				<input type="string" const_name="sRadio" init_value="">Radio</input>
+				<input type="string" const_name="sJoinRincon" init_value="0">Join RINCON</input>
+            </inputs>
+            <outputs>
+                <output type="string" const_name="sOut" init_value="">Debug</output>
+            </outputs>               
+			<remanent_variables>
+            </remanent_variables>
+            <imports>
+            </imports>		
+        </module>
+    </modules>
+</config>
