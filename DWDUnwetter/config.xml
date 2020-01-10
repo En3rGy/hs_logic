@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_dwd" id="11091" name="DWD Unwetter (11091)" version="0.4">
+        <module category="Datenaustausch" context="hsl20_3_dwd" id="11091" name="DWD Unwetter (11091)" version="0.5">
             <inputs>
                 <input type="number" const_name="nTrigger" init_value="0">Trigger</input>			
                 <input type="string" const_name="sCityId" init_value="">City Id</input>

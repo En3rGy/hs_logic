@@ -1,0 +1,166 @@
+<body><div class="titel">JSON-Parser</div>
+<div class="nav"><A HREF="index.html">Hilfe</A> / <A HREF="logic.html">Logik</A> / Datenaustausch / <A HREF="#anker1">Eing&auml;nge</A> / <A HREF="#anker2">Ausg&auml;nge</A></div><div class="field0">Funktion</div>
+<div class="field1"><br>
+Der Baustein leifert den Wert eines JSON Objekts oder die hinter dem Obejkt liegende Json-Struktur. Außerdem bietet der Baustein folgende Funktionen:
+<ul>
+<li>Baustein-Kaskaden über Text-Ausgang zu Json-Eingang, um verschachtelte Strukturen zu erreichen</li>
+<li>Umlaute / Sonderzeichen werden <a href="https://wiki.selfhtml.org/wiki/XML/Regeln/Zeichen">XML-Encodiert</a> ausgegeben</li>
+<li>Bei einem Wert Array Index > -1: Ausgabe von Listeneinträgen</li>
+</ul>
+Z.B.: <i>{"1": "a", "2":[{"2.1": "b.1", "2.2": "b.2"}, {"2.3": "b.3"}]}</i><br>
+1. Baustein mit key = "2";<br>
+2. Baustein mit Idx = 0;<br>
+3. Baustein mit Key= 2.2<br>
+Ausgabe "b.2" 
+</div>
+<h2 style='margin-left:0cm;text-indent:0cm'>Eingänge</h2>
+<a name="anker1" />
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+ style='margin-left:1.4pt;border-collapse:collapse'>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border-top:solid gray 1.0pt;
+  border-left:solid gray 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:
+  none;background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt><b>Eingang</b></p>
+  </td>
+  <td width=76 valign=top style='width:56.65pt;border-top:solid gray 1.0pt;
+  border-left:solid gray 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:
+  none;background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'><b>Initwert</b></p>
+  </td>
+  <td width=340 valign=top style='width:9.0cm;border:solid gray 1.0pt;
+  border-bottom:solid windowtext 1.0pt;background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt><b>Beschreibung</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border:solid windowtext 1.0pt;
+  border-top:none;background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>JSON-String</p>
+  </td>
+  <td width=76 valign=top style='width:56.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'></p>
+  </td>
+  <td width=340 valign=top style='width:9.0cm;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Gültiger (!) JSON-String</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border:solid windowtext 1.0pt;
+  border-top:none;background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Key</p>
+  </td>
+  <td width=76 valign=top style='width:56.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt></p>
+  </td>
+  <td width=340 valign=top style='width:9.0cm;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>JSON Key für den der Wert ausgegeben werden soll.</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border:solid windowtext 1.0pt;
+  border-top:none;background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Array Index</p>
+  </td>
+  <td width=76 valign=top style='width:56.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'>-1</p>
+  </td>  
+  <td width=76 valign=top style='width:56.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Index des Arrey Elements, welches ausgegeben werden soll</p>
+  </td>
+ </tr>
+</table>
+
+<h2 style='margin-left:0cm;text-indent:0cm'>Ausgänge</h2>
+<a name="anker2" />
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 style='margin-left:1.4pt;border-collapse:collapse'>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border:solid gray 1.0pt;
+  border-right:none;background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt><b>Ausgang</b></p>
+  </td>
+  <td width=76 valign=top style='width:56.75pt;border:solid gray 1.0pt;
+  border-right:none;background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'><b>Initwert</b></p>
+  </td>
+  <td width=340 valign=top style='width:255.05pt;border:solid gray 1.0pt;
+  background:silver;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt><b>Beschreibung</b></p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border-top:none;border-left:
+  solid gray 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Value (str)</p>
+  </td>
+  <td width=76 valign=top style='width:56.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'></p>
+  </td>
+  <td width=340 valign=top style='width:255.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid gray 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Angefragter Wert oder JSON-Struktur</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;border-top:none;border-left:
+  solid gray 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Value (number)</p>
+  </td>
+  <td width=76 valign=top style='width:56.75pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt align=center style='text-align:center'>0</p>
+  </td>
+  <td width=340 valign=top style='width:255.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid gray 1.0pt;
+  background:white;padding:1.4pt 1.4pt 1.4pt 1.4pt'>
+  <p class=TabellenInhalt>Angefragter Wert als Zahl (float, int oder bool)</p>
+  </td>
+ </tr>
+</table>
+
+<h2 style='margin-left:0cm;text-indent:0cm'>Sonstiges</h2>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse'>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>Neuberechnung beim Start</p>
+  </td>
+  <td width=75 valign=top style='width:56.5pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>ja</p>
+  </td>
+  <td width=341 valign=top style='width:255.7pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='page-break-inside:avoid'>
+  <td width=227 valign=top style='width:170.05pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>Baustein ist remanent</p>
+  </td>
+  <td width=75 valign=top style='width:56.5pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>ja</p>
+  </td>
+  <td width=341 valign=top style='width:255.7pt;background:white;padding:0cm 0cm 0cm 0cm'>
+  <p class=TabellenInhalt>&nbsp;</p>
+  </td>
+ </tr>
+</table>
+</body>

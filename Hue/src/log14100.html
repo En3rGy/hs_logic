@@ -1,0 +1,174 @@
+<body>
+<h1>Hue Group</h1>
+<p>Der Baustein stuert Hue Gruppen und liest den Status der Gruppe oder einzlener Lampen aus.
+Um die Netzwerklast zu veringern können mehrere Bausteine als Kaskade geschaltet werden, um die Statusmeöldung der Hue-Bridge für mehrere
+Lampen bzw. Gruppen auszulesen.</p>
+
+<table>
+ <tr>
+  <td>Baustein Id:</td>
+  <td>14100</td>
+ </tr>
+ <tr>
+  <td>Kategorie:</td>
+  <td>Datenaustausch</td>
+ </tr>
+  <tr>
+  <td>Gültigkeit der Hilfe:</td>
+  <td>Bausteinversion 0.4</td>
+ </tr>
+</table>
+
+
+<h2 >Eingänge</h2>
+
+<a name="anker1" />
+<table border=1>
+ <tr>
+  <td><b>Eingang</b></td>
+  <td><b>Initwert</b></td>
+  <td><b>Beschreibung</b></td>
+ </tr>
+ <tr>
+  <td>Groups Json</td>
+  <td></td>
+  <td>Für Baustein-Kaskade: Verknüpfung des gleichnamigen Ausgangs eines anderen Bausteins.</td>
+ </tr>
+ <tr>
+  <td>Lights Json</td>
+  <td></td>
+  <td>Für Baustein-Kaskade: Verknüpfung des gleichnamigen Ausgangs eines anderen Bausteins.</td>
+ </tr>
+ <tr>
+  <td>Get Status</td>
+  <td></td>
+  <td>Ein Wert =1 triggert den Status-Abruf über dei Hue-Bridge. Hier ist es z.B. Sinnvoll einen Telegrammgenerator anzuschließen.
+  Damit kann detektiert werden, wenn eine Lampe auf einem anderen Weg, als über den Baustein geschaltet wird.</td>
+ </tr>
+ <tr>
+  <td>Hue Bridge IP</td>
+  <td></td>
+  <td>IP der Hue Bridge</td>
+ </tr>
+ <tr>
+  <td>Hue Bridge Port</td>
+  <td>80</td>
+  <td>Port der Hue Bridge</td>
+ </tr>
+ <tr>
+  <td>User</td>
+  <td></td>
+  <td><a href="https://developers.meethue.com/develop/get-started-2/">Hue Bridge User</a></td>
+ </tr>
+ <tr>
+  <td>Group Id</td>
+  <td>0</td>
+  <td>Id der zu schaltenden Hue Gruppe, vgl. http://hue-ip/api/hue-user/groups</td>
+ </tr>
+ <tr>
+  <td>Light Id</td>
+  <td>0</td>
+  <td>Id der auszuwertenden Hue Lampe, vgl. http://hue-ip/api/hue-user/lights</td>
+ </tr>
+ <tr>
+  <td>Grp On/Off</td>
+  <td>0</td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>Grp Brightness</td>
+  <td>0</td>
+  <td>Helligkeit für die Hue Gruppe.</td>
+ </tr>
+ <tr>
+  <td>Grp Hue Color</td>
+  <td>0</td>
+  <td>Hue Farbe der Hue Color.</td>
+ </tr>
+ <tr>
+  <td>Grp Saturation</td>
+  <td>0</td>
+  <td>Sättigung der Hue Gruppe.</td>
+ </tr>
+ <tr>
+  <td>Grp Hue Scene</td>
+  <td></td>
+  <td>Hue Scene für die Hue Gruppe, vgl. http://hue-bridge-ip/user/scenes</td>
+ </tr>
+</table>
+
+<h2>Ausgänge</h2>
+
+<table border=1>
+ <tr>
+  <td><b>Ausgang</b></td>
+  <td><b>Initwert</b></td>
+  <td><b>Beschreibung</b></td>
+ </tr>
+ <tr>
+ <tr>
+  <td>Grp On/Off</td>
+  <td>0</td>
+  <td>Ein/Aus Status</td>
+ </tr>
+  <tr>
+  <td>Grp Brightness</td>
+  <td>0</td>
+  <td>Aktuelle Helligkeit</td>
+ </tr>
+  <tr>
+  <td>Grp Hue Color</td>
+  <td>0</td>
+  <td>Aktuelle Hue Color</td>
+ </tr>
+  <tr>
+  <td>Grp Saturation</td>
+  <td>0</td>
+  <td>Aktuelle Sättigung</td>
+ </tr>
+  <tr>
+  <td>Lght Reachable</td>
+  <td>0</td>
+  <td>Erreichbarkeit der Lampe (nicht Gruppe!)</td>
+ </tr>
+  <tr>
+  <td>Groups Json</td>
+  <td></td>
+  <td>Json Struktur für den Status der Gruppe für Kaskaden von Bausteinen (für den Eingang des Folgebausteins).</td>
+ </tr>
+  <tr>
+  <td>Lights Json</td>
+  <td></td>
+  <td>Json Struktur für den Status der Leuchten für Kaskaden von Bausteinen (für den Eingang des Folgebausteins).</td>
+ </tr>
+</table>
+
+<h2>Open Issues / Known Bugs</h2>
+<ul>
+<li>-</li>
+</ul>
+
+<h2>Sonstiges</h2>
+
+<table>
+ <tr>
+  <td>Neuberechnung beim Start</td>
+  <td>Nein</td>
+ </tr>
+ <tr>
+  <td>Baustein ist remanent</td>
+  <td>Nein</td>
+ </tr>
+</table>
+
+<h2>Code</h2>
+
+Der Python-Code des Bausteins befindet sich auf <a href="https://github.com/En3rGy/hs_logic">github</a>.
+
+<h2>Lizenz</h2>
+
+<p>Copyright 2020 T. Paul</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>
