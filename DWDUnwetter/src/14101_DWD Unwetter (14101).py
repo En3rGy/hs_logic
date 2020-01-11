@@ -11,7 +11,7 @@ import time
 ########################################################################################################
 ##** Code created by generator - DO NOT CHANGE! **##
 
-class DWDUnwetter_11091_11091(hsl20_3.BaseModule):
+class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
 
     def __init__(self, homeserver_context):
         hsl20_3.BaseModule.__init__(self, homeserver_context, "hsl20_3_dwd")
