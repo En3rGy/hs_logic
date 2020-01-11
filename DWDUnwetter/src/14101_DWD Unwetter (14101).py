@@ -60,7 +60,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             response_data = response.read()
         except Exception as e:
             self._set_output_value(self.PIN_O_BERROR, True)
-            self.DEBUG.self.DEBUG.add_message("Error connecting to www.dwd.de: " + str(e))
+            self.DEBUG.add_message("Error connecting to www.dwd.de: " + str(e))
         return response_data
 
     def getCityJson(self, sJson, sCityId):
@@ -114,7 +114,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         if ((m_sCityId == "") or 
             (self._get_input_value(self.PIN_I_SCITY) == "")):
             self._set_output_value(self.PIN_O_BERROR, True)
-            self.DEBUG.self.DEBUG.add_message("Could not retrieve City Id")
+            self.DEBUG.add_message("Could not retrieve City Id")
             return
 
         # retrieve city id if not done before
