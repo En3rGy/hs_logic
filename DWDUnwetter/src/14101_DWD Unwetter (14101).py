@@ -110,16 +110,15 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         data = ""
         cityJson = "---"
         m_sCityId = self._get_input_value(self.PIN_I_SCITYID)
-        
-        if ((m_sCityId == "") or 
-            (self._get_input_value(self.PIN_I_SCITY) == "")):
-            self._set_output_value(self.PIN_O_BERROR, True)
-            self.DEBUG.add_message("Could not retrieve City Id")
-            return
 
         # retrieve city id if not done before
         if (m_sCityId == ""):
             m_sCityId = self.getCityId(self._get_input_value(self.PIN_I_SCITY))
+
+        if (m_sCityId == ""):
+            self._set_output_value(self.PIN_O_BERROR, True)
+            self.DEBUG.add_message("Could not retrieve City Id")
+            return
 
         # get json date if triggered
         if (index == self.PIN_I_NTRIGGER) and (value == True):
@@ -153,13 +152,14 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_SHEADLINE, sHeadline.encode("ascii", "xmlcharrefreplace"))
             self._set_output_value(self.PIN_O_SDESCR, sDesrc.encode("ascii", "xmlcharrefreplace"))
             self._set_output_value(self.PIN_O_SINSTR, sInstr.encode("ascii", "xmlcharrefreplace"))
-            self._set_output_value(self.PIN_O_FSTART, nStart)
-            self._set_output_value(self.PIN_O_FSTOP, nEnd)
+            self._set_output_value(self.PIN_O_FSTART, nStart / 1000)
+            self._set_output_value(self.PIN_O_FSTOP, nEnd / 1000)
             self._set_output_value(self.PIN_O_FLEVEL, grRet["level"])
             self._set_output_value(self.PIN_O_BERROR, False)
 
             # determine if warn window is active
             # time is provided as us but function demands s
+            # "start":1578765600 000,"end":1578823200 000
             currentTime = time.localtime()
             if ((time.localtime(nEnd / 1000) > currentTime) and
                 (currentTime > time.localtime(nStart / 1000))):
