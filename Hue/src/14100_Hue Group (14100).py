@@ -86,7 +86,7 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
                     self._set_output_value(self.PIN_O_BSTATUSONOFF, bOnOff)
 
                     if 'bri' in actionSub:
-                        nBri = actionSub['bri']
+                        nBri = int(actionSub['bri'] / 254.0 * 100)
                         self._set_output_value(self.PIN_O_NBRI, nBri)
                     if 'hue' in actionSub:
                         nHue = actionSub['hue']
@@ -153,7 +153,7 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         light = int(self._get_input_value(self.PIN_I_NLIGHT))
         hueGroupState = {"data" : str(self._get_input_value(self.PIN_I_SGROUPSTATJSON)), "status" : 200}
         hueLightState = {"data" : str(self._get_input_value(self.PIN_I_SLIGHTSSTATJSON)), "status"  :200}
-        nBri = self._get_input_value(self.PIN_I_NBRI)
+        nBri = int(self._get_input_value(self.PIN_I_NBRI) / 100.0 * 254)
 
         #### If trigger == 1, get data via web request
         if (self.PIN_I_BTRIGGER == index) and (bool(value)):

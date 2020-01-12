@@ -1,7 +1,7 @@
 <body>
 <h1>Hue Group</h1>
-<p>Der Baustein stuert Hue Gruppen und liest den Status der Gruppe oder einzlener Lampen aus.
-Um die Netzwerklast zu veringern können mehrere Bausteine als Kaskade geschaltet werden, um die Statusmeöldung der Hue-Bridge für mehrere
+<p>Der Baustein steuert Hue Gruppen und liest den Status der Gruppe oder einzelner Lampen aus.
+Um die Netzwerklast zu verringern können mehrere Bausteine als Kaskade geschaltet werden, um die Statusmeldung der Hue-Bridge für mehrere
 Lampen bzw. Gruppen auszulesen.</p>
 
 <table>
@@ -15,7 +15,7 @@ Lampen bzw. Gruppen auszulesen.</p>
  </tr>
   <tr>
   <td>Gültigkeit der Hilfe:</td>
-  <td>Bausteinversion 0.4</td>
+  <td>Bausteinversion 0.5</td>
  </tr>
 </table>
 
@@ -42,7 +42,7 @@ Lampen bzw. Gruppen auszulesen.</p>
  <tr>
   <td>Get Status</td>
   <td></td>
-  <td>Ein Wert =1 triggert den Status-Abruf über dei Hue-Bridge. Hier ist es z.B. Sinnvoll einen Telegrammgenerator anzuschließen.
+  <td>Ein Wert =1 triggert den Status-Abruf über die Hue-Bridge. Hier ist es z.B. Sinnvoll einen Telegrammgenerator anzuschließen.
   Damit kann detektiert werden, wenn eine Lampe auf einem anderen Weg, als über den Baustein geschaltet wird.</td>
  </tr>
  <tr>
@@ -78,7 +78,7 @@ Lampen bzw. Gruppen auszulesen.</p>
  <tr>
   <td>Grp Brightness</td>
   <td>0</td>
-  <td>Helligkeit für die Hue Gruppe.</td>
+  <td>Helligkeit für die Hue Gruppe in Prozent.</td>
  </tr>
  <tr>
   <td>Grp Hue Color</td>
@@ -114,7 +114,7 @@ Lampen bzw. Gruppen auszulesen.</p>
   <tr>
   <td>Grp Brightness</td>
   <td>0</td>
-  <td>Aktuelle Helligkeit</td>
+  <td>Aktuelle Helligkeit in Prozent</td>
  </tr>
   <tr>
   <td>Grp Hue Color</td>
@@ -143,11 +143,6 @@ Lampen bzw. Gruppen auszulesen.</p>
  </tr>
 </table>
 
-<h2>Open Issues / Known Bugs</h2>
-<ul>
-<li>-</li>
-</ul>
-
 <h2>Sonstiges</h2>
 
 <table>
@@ -161,11 +156,25 @@ Lampen bzw. Gruppen auszulesen.</p>
  </tr>
 </table>
 
-<h2>Code</h2>
+<h3>Change Log</h3>
+<ul>
+  <li>v0.5
+    <ul>
+	  <li>Brightness als Prozentwert für Ein- und Ausgang (statt Absolutwert (0-254).</li>
+	</ul>
+  </li>
+</ul>
+
+<h3>Open Issues / Known Bugs</h3>
+<ul>
+<li>-</li>
+</ul>
+
+<h3>Code</h3>
 
 Der Python-Code des Bausteins befindet sich auf <a href="https://github.com/En3rGy/hs_logic">github</a>.
 
-<h2>Lizenz</h2>
+<h3>Lizenz</h3>
 
 <p>Copyright 2020 T. Paul</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
