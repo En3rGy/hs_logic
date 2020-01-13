@@ -1,6 +1,7 @@
 # coding: UTF-8
 import httplib
 import json
+from _ast import Or
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -25,14 +26,16 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         self.PIN_I_NBRI=10
         self.PIN_I_NHUE=11
         self.PIN_I_NSAT=12
-        self.PIN_I_SSCENE=13
+        self.PIN_I_NCT=13
+        self.PIN_I_SSCENE=14
         self.PIN_O_BSTATUSONOFF=1
         self.PIN_O_NBRI=2
         self.PIN_O_NHUE=3
         self.PIN_O_NSAT=4
-        self.PIN_O_NREACHABLE=5
-        self.PIN_O_NGRPJSON=6
-        self.PIN_O_NLGHTSJSON=7
+        self.PIN_O_NCT=5
+        self.PIN_O_NREACHABLE=6
+        self.PIN_O_NGRPJSON=7
+        self.PIN_O_NLGHTSJSON=8
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -94,6 +97,9 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
                     if 'sat' in actionSub:
                         nSat = actionSub['sat']
                         self._set_output_value(self.PIN_O_NSAT, nSat)
+                    if 'ct' in actionSub:
+                        nCt = actionSub['ct']
+                        self._set_output_value(self.PIN_O_NCT, nCt)
         except:
             jsonState = []
 
@@ -101,6 +107,7 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
 
     def httpPut(self, api_url, api_port, api_user, group, payload):
         httpClient = None
+        data = {'data' : "", 'status' : -1}
         try:
             api_path = '/api/' + api_user + '/groups/' + str(group) + '/action'
             headers = { "HOST": str(api_url + ":" + str(api_port)), "CONTENT-LENGTH": str(len(payload)), "Content-type": 'application/json' }
@@ -109,36 +116,56 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
             httpClient.request("PUT", api_path, payload, headers) 
             response = httpClient.getresponse()
             status = response.status
-            #data = {'data' : response.read(), 'status' : status}
+            data = {'data' : response.read(), 'status' : status}
             #print data
-            return True
-        except Exception as e:
-            print(e)
-            return False
+            return data
+        #except Exception as e:
+        except:
+            return data
         finally:
             if httpClient:
                 httpClient.close()
-                
+
     def hueOnOff(self, api_url, api_port, api_user, group, bSetOn):
         payload = ""
         if bSetOn == True:
             payload = '{"on":true}'
         else:
             payload = '{"on":false}'
-            
+
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
-        return ret
-        
+        return ("success" in ret["data"])
+
     def setScene(self, api_url, api_port, api_user, group, sScene):
         payload = '{"scene":"' + sScene + '"}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
-        return ret        
-        
+        return ("success" in ret["data"])
+
     def setBri(self, api_url, api_port, api_user, group, nBri):
+        if (nBri > 0):
+            self.hueOnOff(api_url, api_port, api_user, group, True)
         payload = '{"bri":' + str(nBri) + '}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
-        return ret
-    
+        return ("success" in ret["data"])
+
+    def setHueColor(self, api_url, api_port, api_user, group, nHueCol):
+        self.hueOnOff(api_url, api_port, api_user, group, True)
+        payload = '{"hue":' + str(nHueCol) + '}'
+        ret = self.httpPut(api_url, api_port, api_user, group, payload)
+        return ("success" in ret["data"])
+
+    def setSat(self, api_url, api_port, api_user, group, nSat):
+        self.hueOnOff(api_url, api_port, api_user, group, True)
+        payload = '{"sat":' + str(nSat) + '}'
+        ret = self.httpPut(api_url, api_port, api_user, group, payload)
+        return ("success" in ret["data"])
+
+    def setCt(self, api_url, api_port, api_user, group, nCt):
+        self.hueOnOff(api_url, api_port, api_user, group, True)
+        payload = '{"ct":' + str(nCt) + '}'
+        ret = self.httpPut(api_url, api_port, api_user, group, payload)
+        return ("success" in ret["data"])
+
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
     
@@ -154,24 +181,30 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         hueGroupState = {"data" : str(self._get_input_value(self.PIN_I_SGROUPSTATJSON)), "status" : 200}
         hueLightState = {"data" : str(self._get_input_value(self.PIN_I_SLIGHTSSTATJSON)), "status"  :200}
         nBri = int(self._get_input_value(self.PIN_I_NBRI) / 100.0 * 254)
+        nHueCol = int(self._get_input_value(self.PIN_I_NHUE))
+        nSat = int(self._get_input_value(self.PIN_I_NSAT) / 100.0 * 254)
+        nCt = int(self._get_input_value(self.PIN_I_NCT))
 
         #### If trigger == 1, get data via web request
         if (self.PIN_I_BTRIGGER == index) and (bool(value)):
             hueGroupState = self.getData(sApi_url, nApi_port, sApi_user, "groups")
             hueLightState = self.getData(sApi_url, nApi_port, sApi_user, "lights")
+            #self.DEBUG.set_value("grp json", hueGroupState)
+            #self.DEBUG.set_value("lght json", hueLightState)
 
-            self.DEBUG.set_value("grp json", hueGroupState)
-            self.DEBUG.set_value("lght json", hueLightState)
+        if ((self.PIN_I_BTRIGGER == index) or
+            (self.PIN_I_SGROUPSTATJSON == index)):
+            if (hueGroupState["data"]):
+                if (group > 0):
+                    self.readGroupsJson(hueGroupState["data"], group)
+                    self._set_output_value(self.PIN_O_NGRPJSON, hueGroupState["data"])
 
-        if (hueGroupState["data"]):
-            if (group > 0):
-                self.readGroupsJson(hueGroupState["data"], group)
-            self._set_output_value(self.PIN_O_NGRPJSON, hueGroupState["data"])
-
-        if (hueLightState["data"]):
-            if (light > 0):
-                self.readLightsJson(hueLightState["data"], light)
-            self._set_output_value(self.PIN_O_NLGHTSJSON, hueLightState["data"])
+        if ((self.PIN_I_BTRIGGER == index) or
+            (self.PIN_I_SLIGHTSSTATJSON == index)):
+            if (hueLightState["data"]):
+                if (light > 0):
+                    self.readLightsJson(hueLightState["data"], light)
+                    self._set_output_value(self.PIN_O_NLGHTSJSON, hueLightState["data"])
 
         #### Process set commands
         if (self._get_input_value(self.PIN_I_SUSER) == "") or (self._get_input_value(self.PIN_I_SHUEIP) == ""):
@@ -189,6 +222,21 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
 
         if self.PIN_I_NBRI == index :
             res = self.setBri(sApi_url, nApi_port, sApi_user, group, nBri)
+            print(res)
             if (res):
                 self._set_output_value(self.PIN_O_NBRI, nBri)
 
+        if self.PIN_I_NHUE == index :
+            res = self.setHueColor(sApi_url, nApi_port, sApi_user, group, nHueCol)
+            if (res):
+                self._set_output_value(self.PIN_O_NHUE, nHueCol)
+
+        if self.PIN_I_NSAT == index :
+            res = self.setSat(sApi_url, nApi_port, sApi_user, group, nSat)
+            if (res):
+                self._set_output_value(self.PIN_O_NSAT, nSat)
+
+        if self.PIN_I_NCT == index :
+            res = self.setCt(sApi_url, nApi_port, sApi_user, group, nCt)
+            if (res):
+                self._set_output_value(self.PIN_O_NCT, nCt)

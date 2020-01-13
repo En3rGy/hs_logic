@@ -73,22 +73,33 @@ Lampen bzw. Gruppen auszulesen.</p>
  <tr>
   <td>Grp On/Off</td>
   <td>0</td>
-  <td></td>
+  <td>Schaltet die Lampengruppe ein/aus.</td>
  </tr>
  <tr>
   <td>Grp Brightness</td>
   <td>0</td>
-  <td>Helligkeit für die Hue Gruppe in Prozent.</td>
+  <td>Helligkeit für die Hue Gruppe in Prozent.<br>
+      Wird der Wert gesetzt, wird die Gruppe eingeschaltet.</td>
  </tr>
  <tr>
   <td>Grp Hue Color</td>
   <td>0</td>
-  <td>Hue Farbe der Hue Color.</td>
+  <td>Hue Color:<br>
+      0 - 65.535; mit <i>182,04 * Hue Color Wert</i><br>
+      Wird der Wert gesetzt, wird die Gruppe eingeschaltet.</td>
  </tr>
  <tr>
   <td>Grp Saturation</td>
   <td>0</td>
-  <td>Sättigung der Hue Gruppe.</td>
+  <td>Sättigung der Hue Gruppe in Prozent.<br>
+      Wird der Wert gesetzt, wird die Gruppe eingeschaltet.</td>
+ </tr>
+ <tr>
+  <td>Grp Color Temp</td>
+  <td>0</td>
+  <td>Farbtemperatur der Gruppe (nur Weißwert):<br>
+      154 - 500; mit <i>1.000.000 / CT-Wert</i>, z.B. 6500K = 154 (kalt) und 2000K = 500 (warm)<br>
+      Wird der Wert gesetzt, wird die Gruppe eingeschaltet.</td>
  </tr>
  <tr>
   <td>Grp Hue Scene</td>
@@ -124,8 +135,13 @@ Lampen bzw. Gruppen auszulesen.</p>
   <tr>
   <td>Grp Saturation</td>
   <td>0</td>
-  <td>Aktuelle Sättigung</td>
+  <td>Aktuelle Sättigung in Prozent</td>
  </tr>
+ <tr>
+  <td>Grp Color Temp</td>
+  <td>0</td>
+  <td>Farbtemperatur der Gruppe (nur Weißwert)</td>
+ </tr> 
   <tr>
   <td>Lght Reachable</td>
   <td>0</td>
@@ -160,7 +176,9 @@ Lampen bzw. Gruppen auszulesen.</p>
 <ul>
   <li>v0.5
     <ul>
-	  <li>Brightness als Prozentwert für Ein- und Ausgang (statt Absolutwert (0-254).</li>
+	  <li>Brightness als Prozentwert für Ein- und Ausgang (statt Absolutwert 0-254).</li>
+	  <li>Saturation als Prozentwert für Ein- und Ausgang (statt Absolutwert 0-254).</li>
+	  <li>Color Temp. als Parameter eingeführt.</li>
 	</ul>
   </li>
 </ul>
