@@ -21,14 +21,15 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         self.PIN_I_SCITYID=2
         self.PIN_I_SCITY=3
         self.PIN_O_SHEADLINE=1
-        self.PIN_O_SDESCR=2
-        self.PIN_O_SINSTR=3
-        self.PIN_O_FSTART=4
-        self.PIN_O_FSTOP=5
-        self.PIN_O_FLEVEL=6
-        self.PIN_O_BACTIVE=7
-        self.PIN_O_BERROR=8
-        self.PIN_O_SJSON=9
+        self.PIN_O_FLEVEL=2
+        self.PIN_O_SDESCR=3
+        self.PIN_O_SINSTR=4
+        self.PIN_O_FSTART=5
+        self.PIN_O_FSTOP=6
+        self.PIN_O_SALLWRNSTR=7
+        self.PIN_O_BACTIVE=8
+        self.PIN_O_BERROR=9
+        self.PIN_O_SJSON=10
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -93,6 +94,15 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
 
         return val
     
+    def getAllWarnings(self, grWarningsLst):
+        sMsg = "Bevorstehende Unwetterereignisse: "
+        for i in range(0, len(grWarningsLst)):
+            sMsg += self.getVal(grWarningsLst[i], "level")
+            if (i < len(grWarningsLst) - 1):
+                sMsg += ", "
+
+        return sMsg
+    
     def getCityId(self, sCityName):
         sCityId = "0"
         sJson = self.getData()
@@ -148,6 +158,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             sInstr = self.getVal(grWarningsLst[nIdx], "instruction")
             nStart = self.getVal(grWarningsLst[nIdx], "start")
             nEnd = self.getVal(grWarningsLst[nIdx], "end")
+            sAllWarnings = self.getAllWarnings(grWarningsLst[nIdx])
 
             self._set_output_value(self.PIN_O_SHEADLINE, sHeadline.encode("ascii", "xmlcharrefreplace"))
             self._set_output_value(self.PIN_O_SDESCR, sDesrc.encode("ascii", "xmlcharrefreplace"))
@@ -156,6 +167,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_FSTOP, nEnd / 1000)
             self._set_output_value(self.PIN_O_FLEVEL, grRet["level"])
             self._set_output_value(self.PIN_O_BERROR, False)
+            self._set_output_value(self.PIN_O_SALLWRNSTR, sAllWarnings)
 
             # determine if warn window is active
             # time is provided as us but function demands s
@@ -179,3 +191,4 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
                 self._set_output_value(self.PIN_O_FLEVEL, 0)
                 self._set_output_value(self.PIN_O_BACTIVE, False)
                 self._set_output_value(self.PIN_O_BERROR, False)
+                self._set_output_value(self.PIN_O_SALLWRNSTR, "")

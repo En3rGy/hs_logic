@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_dwd" id="14101" name="DWD Unwetter (14101)" version="0.7">
+        <module category="Datenaustausch" context="hsl20_3_dwd" id="14101" name="DWD Unwetter (14101)" version="0.8">
             <inputs>
                 <input type="number" const_name="nTrigger" init_value="0">Trigger</input>			
                 <input type="string" const_name="sCityId" init_value="">City Id</input>
@@ -9,11 +9,12 @@
             </inputs>
             <outputs>
 				<output type="string" const_name="sHeadline" init_value="">Headline</output>
+				<output type="number" const_name="fLevel" init_value="0">Level</output>				
 				<output type="string" const_name="sDescr" init_value="">Description</output>
 				<output type="string" const_name="sInstr" init_value="">Instruction</output>
 				<output type="number" const_name="fStart" init_value="0">Start Time</output>
 				<output type="number" const_name="fStop" init_value="0">Stop Time</output>
-				<output type="number" const_name="fLevel" init_value="0">Level</output>
+				<output type="string" const_name="sAllWrnStr" init_value="">All Warnings Str</output>				
 				<output type="number" const_name="bActive" init_value="0">Warning Active</output>					
 				<output type="number" const_name="bError" init_value="0">Error</output>				
 				<output type="string" const_name="sJson" init_value="">Json</output>				
