@@ -1,6 +1,5 @@
 # coding: UTF-8
 import json
-from test.test_ssl import try_protocol_combo
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -30,34 +29,40 @@ class JSON_Parser_11087_11087(hsl20_3.BaseModule):
         if isinstance(jsonFile, list):
             if (nIndex<len(jsonFile)):
                 return json.dumps(jsonFile[nIndex])
-        
+
         return "{}"
 
     def getValue(self, sJson, sKey ):
         jsonFile = json.loads(sJson)
-        val = ""
+        ret = ""
         if sKey in jsonFile:
             val = jsonFile[sKey]
-            
+
             if (isinstance( val, dict) 
                 or isinstance( val, list)):
-                val = json.dumps(val)
-                
-        if isinstance(val, unicode):
-            val = val.encode("ascii", "xmlcharrefreplace")
+                ret = json.dumps(val)
+            else:
+                ret = val
+        else:
+            self.DEBUG.add_message("Error: Key not found.")
 
-        return val
+        if isinstance(ret, str):
+            ret = ret.encode("ascii", "xmlcharrefreplace")
+
+        return ret
 
     def on_init(self):
-        pass
+        self.DEBUG = self.FRAMEWORK.create_debug_section()
 
     def on_input_value(self, index, value):
+        #self.DEBUG.set_value("Response code", status)
+        #self.DEBUG.add_message("Error connecting to www.dwd.de: " + str(e))
         sJson = self._get_input_value(self.PIN_I_SJSON)
         sKey = self._get_input_value(self.PIN_I_SKEY)
         nIdx = self._get_input_value(self.PIN_I_SIDX)
-        
+
         val = ""
-        
+
         if( nIdx >= 0 ):
             val = self.getListElement(sJson, nIdx)
         else:
@@ -71,9 +76,10 @@ class JSON_Parser_11087_11087(hsl20_3.BaseModule):
             val = val.replace( ": True", ': true' )
 
         self._set_output_value(self.PIN_O_SVALUE, str(val))
-        
+
         #converting a not-number-string to float causes an exception
         try:
             self._set_output_value(self.PIN_O_FVALUE, float(val))
-        except:
-            pass
+        except Exception as e:
+            self.DEBUG.add_message("Error converting '" + str(val) + "' to float: " + str(e))
+

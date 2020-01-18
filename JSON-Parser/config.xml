@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_json" id="11087" name="JSON-Parser (11087)" version="0.12">
+        <module category="Datenaustausch" context="hsl20_3_json" id="11087" name="JSON-Parser (11087)" version="0.13">
             <inputs>
                 <input type="string" const_name="sJson" init_value="">JSON-String</input>
                 <input type="string" const_name="sKey" init_value="">Key</input>

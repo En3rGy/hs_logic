@@ -15,14 +15,13 @@ Lampen bzw. Gruppen auszulesen.</p>
  </tr>
   <tr>
   <td>Gültigkeit der Hilfe:</td>
-  <td>Bausteinversion 0.5</td>
+  <td>Bausteinversion 0.6</td>
  </tr>
 </table>
 
 
 <h2 >Eingänge</h2>
 
-<a name="anker1" />
 <table border=1>
  <tr>
   <td><b>Eingang</b></td>
@@ -102,6 +101,21 @@ Lampen bzw. Gruppen auszulesen.</p>
       Wird der Wert gesetzt, wird die Gruppe eingeschaltet.</td>
  </tr>
  <tr>
+  <td>r</td>
+  <td>0</td>
+  <td>RGB Rotwert 0-255</td>
+ </tr>
+ <tr>
+  <td>g</td>
+  <td>0</td>
+  <td>RGB Grünwert 0-255</td>
+ </tr>
+ <tr>
+  <td>g</td>
+  <td>0</td>
+  <td>RGB Blauwert 0-255</td>
+ </tr>
+ <tr>
   <td>Grp Hue Scene</td>
   <td></td>
   <td>Hue Scene für die Hue Gruppe, vgl. http://hue-bridge-ip/user/scenes</td>
@@ -177,6 +191,7 @@ Lampen bzw. Gruppen auszulesen.</p>
   <li>v0.6
     <ul>
 	  <li>Bugfix: Saturation Ausgnag wurde nich als Prozentwert sondern 0-254 ausgegeben. Wird nun auch 0-100% skaliert.</li>
+	  <li>RGB Steuerung hinzugefügt (noch ohne RGB Rückmeldung)</li>
 	</ul>
   </li>
   <li>v0.5
@@ -195,7 +210,7 @@ Lampen bzw. Gruppen auszulesen.</p>
 
 <h3>Code</h3>
 
-Der Python-Code des Bausteins befindet sich auf <a href="https://github.com/En3rGy/hs_logic">github</a>.
+Der Python-Code des Bausteins befindet sich in der hslz Datei oder auf <a href="https://github.com/En3rGy/hs_logic">github</a>.
 
 <h3>Lizenz</h3>
 

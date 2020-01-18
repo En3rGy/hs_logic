@@ -1,7 +1,6 @@
 # coding: UTF-8
 import httplib
 import json
-from _ast import Or
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -27,7 +26,10 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         self.PIN_I_NHUE=11
         self.PIN_I_NSAT=12
         self.PIN_I_NCT=13
-        self.PIN_I_SSCENE=14
+        self.PIN_I_NR=14
+        self.PIN_I_NG=15
+        self.PIN_I_NB=16
+        self.PIN_I_SSCENE=17
         self.PIN_O_BSTATUSONOFF=1
         self.PIN_O_NBRI=2
         self.PIN_O_NHUE=3
@@ -149,23 +151,21 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         return ("success" in ret["data"])
 
     def setHueColor(self, api_url, api_port, api_user, group, nHueCol):
-        self.hueOnOff(api_url, api_port, api_user, group, True)
         payload = '{"hue":' + str(nHueCol) + '}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
         return ("success" in ret["data"])
 
     def setSat(self, api_url, api_port, api_user, group, nSat):
-        self.hueOnOff(api_url, api_port, api_user, group, True)
         payload = '{"sat":' + str(nSat) + '}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
         return ("success" in ret["data"])
 
     def setCt(self, api_url, api_port, api_user, group, nCt):
-        self.hueOnOff(api_url, api_port, api_user, group, True)
         payload = '{"ct":' + str(nCt) + '}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
         return ("success" in ret["data"])
 
+    ' Hue HSB (heu, sat, bri) = HSV'
     def rgb2hsv(self, r, g, b):
         r, g, b = r / 255.0, g / 255.0, b / 255.0
         mx = max(r, g, b)
@@ -188,7 +188,12 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
 
         v = mx
 
+        h = int(182.04 * h)
+        s = int(s * 255)
+        v = int(v * 255)
+
         return h, s, v
+
 
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
@@ -245,22 +250,40 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
                 self._set_output_value(self.PIN_O_BSTATUSONOFF, True)
 
         if self.PIN_I_NBRI == index :
+            self.hueOnOff(sApi_url, nApi_port, sApi_user, group, True)
             res = self.setBri(sApi_url, nApi_port, sApi_user, group, nBri)
             print(res)
             if (res):
                 self._set_output_value(self.PIN_O_NBRI, nBri)
 
         if self.PIN_I_NHUE == index :
+            self.hueOnOff(sApi_url, nApi_port, sApi_user, group, True)
             res = self.setHueColor(sApi_url, nApi_port, sApi_user, group, nHueCol)
             if (res):
                 self._set_output_value(self.PIN_O_NHUE, nHueCol)
 
         if self.PIN_I_NSAT == index :
+            self.hueOnOff(sApi_url, nApi_port, sApi_user, group, True)
             res = self.setSat(sApi_url, nApi_port, sApi_user, group, nSat)
             if (res):
                 self._set_output_value(self.PIN_O_NSAT, nSat)
 
         if self.PIN_I_NCT == index :
+            self.hueOnOff(sApi_url, nApi_port, sApi_user, group, True)
             res = self.setCt(sApi_url, nApi_port, sApi_user, group, nCt)
             if (res):
                 self._set_output_value(self.PIN_O_NCT, nCt)
+
+        if ((self.PIN_I_NR == index) or
+            (self.PIN_I_NG == index) or
+            (self.PIN_I_NB == index)):
+            self.hueOnOff(sApi_url, nApi_port, sApi_user, group, True)
+
+            r = int(self._get_input_value(self.PIN_I_NR))
+            g = int(self._get_input_value(self.PIN_I_NG))
+            b = int(self._get_input_value(self.PIN_I_NB))
+            h, s, v = self.rgb2hsv(r, g, b)
+
+            self.setBri(sApi_url, nApi_port, sApi_user, group, v)
+            self.setHueColor(sApi_url, nApi_port, sApi_user, group, h)
+            self.setSat(sApi_url, nApi_port, sApi_user, group, s)

@@ -97,7 +97,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
     def getAllWarnings(self, grWarningsLst):
         sMsg = "Bevorstehende Unwetterereignisse: "
         for i in range(0, len(grWarningsLst)):
-            sMsg += self.getVal(grWarningsLst[i], "level")
+            sMsg += self.getVal(grWarningsLst[i], "event")
             if (i < len(grWarningsLst) - 1):
                 sMsg += ", "
 
@@ -158,7 +158,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             sInstr = self.getVal(grWarningsLst[nIdx], "instruction")
             nStart = self.getVal(grWarningsLst[nIdx], "start")
             nEnd = self.getVal(grWarningsLst[nIdx], "end")
-            sAllWarnings = self.getAllWarnings(grWarningsLst[nIdx])
+            sAllWarnings = self.getAllWarnings(grWarningsLst)
 
             self._set_output_value(self.PIN_O_SHEADLINE, sHeadline.encode("ascii", "xmlcharrefreplace"))
             self._set_output_value(self.PIN_O_SDESCR, sDesrc.encode("ascii", "xmlcharrefreplace"))
@@ -167,7 +167,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_FSTOP, nEnd / 1000)
             self._set_output_value(self.PIN_O_FLEVEL, grRet["level"])
             self._set_output_value(self.PIN_O_BERROR, False)
-            self._set_output_value(self.PIN_O_SALLWRNSTR, sAllWarnings)
+            self._set_output_value(self.PIN_O_SALLWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
 
             # determine if warn window is active
             # time is provided as us but function demands s
