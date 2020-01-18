@@ -95,7 +95,7 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
                         nHue = actionSub['hue']
                         self._set_output_value(self.PIN_O_NHUE, nHue)
                     if 'sat' in actionSub:
-                        nSat = actionSub['sat']
+                        nSat = actionSub['sat'] / 254.0 * 100
                         self._set_output_value(self.PIN_O_NSAT, nSat)
                     if 'ct' in actionSub:
                         nCt = actionSub['ct']
@@ -165,6 +165,30 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         payload = '{"ct":' + str(nCt) + '}'
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
         return ("success" in ret["data"])
+
+    def rgb2hsv(self, r, g, b):
+        r, g, b = r / 255.0, g / 255.0, b / 255.0
+        mx = max(r, g, b)
+        mn = min(r, g, b)
+        df = mx - mn
+
+        if mx == mn:
+            h = 0
+        elif mx == r:
+            h = (60 * ((g-b)/df) + 360) % 360
+        elif mx == g:
+            h = (60 * ((b-r)/df) + 120) % 360
+        elif mx == b:
+            h = (60 * ((r-g)/df) + 240) % 360
+
+        if mx == 0:
+            s = 0
+        else:
+            s = df/mx
+
+        v = mx
+
+        return h, s, v
 
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
