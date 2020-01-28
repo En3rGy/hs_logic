@@ -63,9 +63,15 @@ class JSON_Parser_11087_11087(hsl20_3.BaseModule):
 
         val = ""
 
+        self.DEBUG.set_value("Json", str(sJson))
+        self.DEBUG.set_value("Index", str(nIdx))
+        self.DEBUG.set_value("Key", str(sKey))
+
         if( nIdx >= 0 ):
+            self.DEBUG.add_message("Index requested")
             val = self.getListElement(sJson, nIdx)
         else:
+            self.DEBUG.add_message("Value requested")
             val = self.getValue(sJson, sKey)
 
         # handle unicode representation
@@ -74,6 +80,8 @@ class JSON_Parser_11087_11087(hsl20_3.BaseModule):
             val = val.replace( "'", '"' )
             val = val.replace( ": False", ': false' )
             val = val.replace( ": True", ': true' )
+
+        self.DEBUG.set_value("Value", str(val))
 
         self._set_output_value(self.PIN_O_SVALUE, str(val))
 
