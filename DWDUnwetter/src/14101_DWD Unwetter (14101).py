@@ -119,6 +119,8 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
     def on_input_value(self, index, value):
         data = ""
         cityJson = "---"
+        global m_sCityId
+        global m_bValidData
         m_sCityId = self._get_input_value(self.PIN_I_SCITYID)
 
         # retrieve city id if not done before

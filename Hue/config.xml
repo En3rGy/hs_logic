@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_Hue" id="14100" name="Hue Group (14100)" version="0.6">
+        <module category="Datenaustausch" context="hsl20_3_Hue" id="14100" name="Hue Group (14100)" version="0.7">
             <inputs>
                 <input type="string" const_name="sGroupStatJson" init_value="">Groups Json</input>
                 <input type="string" const_name="sLightsStatJson" init_value="">Lights Json</input>
@@ -27,7 +27,10 @@
 				<output type="number" const_name="nHue" init_value="0">Grp Hue Color</output>
 				<output type="number" const_name="nSat" init_value="0">Grp Saturation</output>
 				<output type="number" const_name="nCt" init_value="0">Grp Color Temp</output>				
-				<output type="number" const_name="nReachable" init_value="0">Lght Reachable</output>				
+				<output type="number" const_name="nR" init_value="0">r</output>
+				<output type="number" const_name="nG" init_value="0">g</output>
+				<output type="number" const_name="nB" init_value="0">b</output>				
+				<output type="number" const_name="nReachable" init_value="0">Lght Reachable</output>
 				<output type="string" const_name="nGrpJson" init_value="">Groups Json</output>
 				<output type="string" const_name="nLghtsJson" init_value="">Lights Json</output>					
             </outputs>               

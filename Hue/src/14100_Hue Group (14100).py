@@ -1,6 +1,7 @@
 # coding: UTF-8
 import httplib
 import json
+import colorsys
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -35,9 +36,12 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         self.PIN_O_NHUE=3
         self.PIN_O_NSAT=4
         self.PIN_O_NCT=5
-        self.PIN_O_NREACHABLE=6
-        self.PIN_O_NGRPJSON=7
-        self.PIN_O_NLGHTSJSON=8
+        self.PIN_O_NR=6
+        self.PIN_O_NG=7
+        self.PIN_O_NB=8
+        self.PIN_O_NREACHABLE=9
+        self.PIN_O_NGRPJSON=10
+        self.PIN_O_NLGHTSJSON=11
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -102,6 +106,16 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
                     if 'ct' in actionSub:
                         nCt = actionSub['ct']
                         self._set_output_value(self.PIN_O_NCT, nCt)
+                        
+                    r, g, b = colorsys.hsv_to_rgb(nHue / 360.0 / 182.04, nSat / 255.0, nBri / 255.0)
+
+                    r = int(r * 255.0)
+                    g = int(g * 255.0)
+                    b = int(b * 255.0)
+
+                    self._set_output_value(self.PIN_O_NR, r)
+                    self._set_output_value(self.PIN_O_NG, g)
+                    self._set_output_value(self.PIN_O_NB, b)
         except:
             jsonState = []
 
@@ -165,32 +179,32 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
         ret = self.httpPut(api_url, api_port, api_user, group, payload)
         return ("success" in ret["data"])
 
-    ' Hue HSB (heu, sat, bri) = HSV'
-    def rgb2hsv(self, r, g, b):
-        r, g, b = r / 255.0, g / 255.0, b / 255.0
-        mx = max(r, g, b)
-        mn = min(r, g, b)
-        df = mx - mn
+    #Hue HSB (heu, sat, bri) = HSV
+    #def rgb2hsv(self, r, g, b):
+    #    r, g, b = r / 255.0, g / 255.0, b / 255.0
+    #    mx = max(r, g, b)
+    #    mn = min(r, g, b)
+    #    df = mx - mn
 
-        if mx == mn:
-            h = 0
-        elif mx == r:
-            h = (60 * ((g-b)/df) + 360) % 360
-        elif mx == g:
-            h = (60 * ((b-r)/df) + 120) % 360
-        elif mx == b:
-            h = (60 * ((r-g)/df) + 240) % 360
+    #    if mx == mn:
+    #        h = 0
+    #    elif mx == r:
+    #        h = (60 * ((g-b)/df) + 360) % 360
+    #    elif mx == g:
+    #        h = (60 * ((b-r)/df) + 120) % 360
+    #    elif mx == b:
+    #        h = (60 * ((r-g)/df) + 240) % 360
 
-        if mx == 0:
-            s = 0
-        else:
-            s = df/mx
+    #    if mx == 0:
+    #        s = 0
+    #    else:
+    #        s = df/mx
 
-        v = mx
+    #    v = mx
 
-        h = int(182.04 * h)
-        s = int(s * 255)
-        v = int(v * 255)
+    #    h = int(182.04 * h)
+    #    s = int(s * 255)
+    #    v = int(v * 255)
 
         return h, s, v
 
@@ -282,8 +296,18 @@ class HueGroup_14100_14100(hsl20_3.BaseModule):
             r = int(self._get_input_value(self.PIN_I_NR))
             g = int(self._get_input_value(self.PIN_I_NG))
             b = int(self._get_input_value(self.PIN_I_NB))
-            h, s, v = self.rgb2hsv(r, g, b)
+            #h, s, v = self.rgb2hsv(r, g, b)
+            h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
+            h = int(360.0 * 182.04 * h)
+            s = int(s * 255)
+            v = int(v * 255)
 
-            self.setBri(sApi_url, nApi_port, sApi_user, group, v)
-            self.setHueColor(sApi_url, nApi_port, sApi_user, group, h)
-            self.setSat(sApi_url, nApi_port, sApi_user, group, s)
+            ret1 = self.setBri(sApi_url, nApi_port, sApi_user, group, v)
+            ret2 = self.setHueColor(sApi_url, nApi_port, sApi_user, group, h)
+            ret3 = self.setSat(sApi_url, nApi_port, sApi_user, group, s)
+
+            if(ret1 and ret2 and ret3):
+                #set rgb as output
+                self._set_output_value(self.PIN_O_NR, r)
+                self._set_output_value(self.PIN_O_NG, g)
+                self._set_output_value(self.PIN_O_NB, b)
