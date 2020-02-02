@@ -14,7 +14,7 @@ Bei mehreren Warnungen wird die höchste Unwetterwarnung ausgegeben - unabhängig 
  </tr>
   <tr>
   <td>Gültigkeit der Hilfe:</td>
-  <td>Bausteinversion 0.9</td>
+  <td>Bausteinversion 0.11</td>
  </tr>
 </table>
 
@@ -33,14 +33,21 @@ Bei mehreren Warnungen wird die höchste Unwetterwarnung ausgegeben - unabhängig 
   <td>Bei einem Wert =1 wird die aktuelle DWD-Json datei abgerfen und ausgewertet.</td>
  </tr>
  <tr>
-  <td>City Id</td>
+  <td>Region Id</td>
   <td></td>
-  <td><b>Id</b> der Gemeinde / Stadt aus der DWD-Json Datei, für die die Unwetterdaten ausgegeben werden sollen.</td>
+  <td><b>Id</b> der Region / Stadt / Landkreis aus der DWD-Json Datei, für die die Unwetterdaten ausgegeben werden sollen.<br>
+  <p><b>Ermittlung der ID</b></p>
+  <p>Die DWD-Json Datei listet aktuell die Unwetterwarnungen auf regionaler Ebene. Um die Id der eigenen Region zu erhalten, muss man:
+  <ol><li>Öffnen der <a href="https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json">DWD JSON-Daten</a> im Browser (Link anklicken)</li>
+  <li>Suchen der gewünschten Region / Stadt / Landkreis</li>
+  <li>In der Datei sieht die Struktur z.B. wie folgt aus:<br>
+  <i>"103401000":[{"regionName":"Stadt Delmenhorst","start":1580...</i><br>
+  Die Id von "Stadt Delmenhorst" ist dabei "103401000".</li></ol></p></td>
  </tr>
  <tr>
-  <td>City</td>
+  <td>Region</td>
   <td></td>
-  <td><b>Name</b> der Gemeinde / Stadt aus der DWD-Json Datei, für die die Unwetterdaten ausgegeben werden sollen. 
+  <td><b>Name</b> der Region / Stadt / Landkreis aus der DWD-Json Datei, für die die Unwetterdaten ausgegeben werden sollen. 
   Innerhalb der Json-Datei wird nach dem 1. Vorkommen des Namens gesucht. "Frankfurt" liefert die Ergebnisse für Frankfurt am Main oder Frankfurt an der Oder</td>
  </tr> 
 </table>
@@ -54,7 +61,7 @@ Bei mehreren Warnungen wird die höchste Unwetterwarnung ausgegeben - unabhängig 
   <td><b>Beschreibung</b></td>
  </tr>
  <tr>
-  <td>Headline</td>
+  <td>Überschrift</td>
   <td></td>
   <td>Überschrift der Unwetetrwarnung.</td>
  </tr>
@@ -64,32 +71,67 @@ Bei mehreren Warnungen wird die höchste Unwetterwarnung ausgegeben - unabhängig 
   <td>Level der höchten Unwetterwarnung für die Gemeinde / Stadt.</td>
  </tr>
  <tr>
-  <td>Description</td>
+  <td>Beschreibung</td>
   <td></td>
   <td>Beschreibung der Unwetterwarnung,</td>
  </tr>
  <tr>
-  <td>Instruction</td>
+  <td>Hinweise</td>
   <td></td>
   <td>Handlungsempfehlungen für die Unwetterwarnung.</td>
  </tr>
   <tr>
-  <td>Start Time</td>
+  <td>Startzeit</td>
   <td>0</td>
   <td>Start-Zeit des Warnfensters in s als <a href="https://de.wikipedia.org/wiki/Unixzeit">UNIX-Zeit.</a></td>
  </tr>
   <tr>
-  <td>Stop Time</td>
+  <td>Stoppzeit</td>
   <td>0</td>
   <td>Stop-Zeit des Warnfensters in s als <a href="https://de.wikipedia.org/wiki/Unixzeit">UNIX-Zeit.</a></td>
  </tr>
   <tr>
-  <td>All Warnings Str</td>
+  <td>Text alle Warnungen</td>
   <td></td>
   <td>Text, der alle aktuell gemeldeten Warnereignisse auflistet. Leer, wenn keine Warnungen vorliegen.</td>
  </tr>
   <tr>
-  <td>Warning Active</td>
+  <td>Text Wetterwarnung (Lv 1)</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis dem DWD Level 1 (=2 am Ausgang Level) entspricht. Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Text markantes Wetter (Lv 2)</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis dem DWD Level 2 (=3 am Ausgang Level) entspricht. Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Text Unwetterwarnung (Lv 3)</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis dem DWD Level 3 (=4 am Ausgang Level) entspricht. Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Text extremem Unwetter (Lv 4)</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis dem DWD Level 4 (=5 am Ausgang Level) entspricht. Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Text Vorabinformation Unwetter</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis einer Vorwarnung entspricht (=1 am Ausgang Level). Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Text Hitzewarnung</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis einer Hitzewarnung entspricht (=10 am Ausgang Level). Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+   <tr>
+  <td>Text UV-Warnung</td>
+  <td></td>
+  <td>Gibt eine Liste aller Warnereignisse aus, wenn das höchste Warnereignis einer UV-Warnung entspricht (=20 am Ausgang Level). Sonst wird ein leerer Text ausgegeben.</td>
+ </tr>
+  <tr>
+  <td>Warnung aktiv (sbc)</td>
   <td>0</td>
   <td>1 wenn die aktuelle Zeit im Warnfenster liegt, also die Warnung akut ist.</td>
  </tr>
@@ -120,6 +162,19 @@ Bei mehreren Warnungen wird die höchste Unwetterwarnung ausgegeben - unabhängig 
 
 <h3>Change Log</h3>
 <ul>
+  <li>v0.11
+    <ul>
+	  <li>Meldung zum aktiven Warnfenster jetzt als Send-by-Change Ausgang</li>
+	  <li>Beschriftung der Ausgänge in Deutsch</li>
+	  <li>Hinzufügen von Textausgaben für die verschiedenen Warnlevel. So können im HS z.B. Textboxen in verschiedenen Farben angelegt werden, die die jew. Warnmeldung in der Warnfarbe wiedergibt.</li>
+	</ul>
+  </li>
+  <li>v0.10
+    <ul>
+	  <li>Bug fix bei der Debug-Ausgabe bei nicht gefundenem Namen der Region</li>
+	  <li>Wechsel der Bezeichnung der Eingänge von <i>City</i> zu <i>Region</i></li>	  
+	</ul>
+  </li>
   <li>v0.9
     <ul>
 	  <li>Fehlendes 'global' für Member-Variablen ergänzt</li>

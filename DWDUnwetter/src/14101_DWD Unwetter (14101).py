@@ -27,9 +27,16 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         self.PIN_O_FSTART=5
         self.PIN_O_FSTOP=6
         self.PIN_O_SALLWRNSTR=7
-        self.PIN_O_BACTIVE=8
-        self.PIN_O_BERROR=9
-        self.PIN_O_SJSON=10
+        self.PIN_O_SLV1STR=8
+        self.PIN_O_SLV2STR=9
+        self.PIN_O_SLV3STR=10
+        self.PIN_O_SLV4STR=11
+        self.PIN_O_SPREWRNSTR=12
+        self.PIN_O_SHEATWRNSTR=13
+        self.PIN_O_SUVWRNSTR=14
+        self.PIN_O_BACTIVE=15
+        self.PIN_O_BERROR=16
+        self.PIN_O_SJSON=17
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -38,6 +45,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
 
     m_sCityId = ""
     m_bValidData = False
+    m_bWarnActive = False
 
     def getData(self):
         #https://www.dwd.de/DWD/warnungen/warnapp/json/warnings.json
@@ -52,6 +60,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         url_resolved = urlparse.urlunparse((url_parsed[0], netloc) + url_parsed[2:])
         # Build a SSL Context to disable certificate verification.
         ctx = ssl._create_unverified_context()
+        response_data = ""
         
         try:
             # Build a http request and overwrite host header with the original hostname.
@@ -95,7 +104,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         return val
     
     def getAllWarnings(self, grWarningsLst):
-        sMsg = "Bevorstehende Unwetterereignisse: "
+        sMsg = ""
         for i in range(0, len(grWarningsLst)):
             sMsg += self.getVal(grWarningsLst[i], "event")
             if (i < len(grWarningsLst) - 1):
@@ -127,7 +136,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         if (m_sCityId == ""):
             m_sCityId = self.getCityId(self._get_input_value(self.PIN_I_SCITY))
 
-        if (m_sCityId == ""):
+        if (m_sCityId == "0"):
             self._set_output_value(self.PIN_O_BERROR, True)
             self.DEBUG.add_message("Could not retrieve City Id")
             return
@@ -171,18 +180,50 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             self._set_output_value(self.PIN_O_BERROR, False)
             self._set_output_value(self.PIN_O_SALLWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
 
+            self._set_output_value(self.PIN_O_SHEATWRNSTR, "")
+            self._set_output_value(self.PIN_O_SLV1STR, "")
+            self._set_output_value(self.PIN_O_SLV2STR, "")
+            self._set_output_value(self.PIN_O_SLV3STR, "")
+            self._set_output_value(self.PIN_O_SLV4STR, "")
+            self._set_output_value(self.PIN_O_SPREWRNSTR, "")
+            self._set_output_value(self.PIN_O_SUVWRNSTR, "")
+
+            if(int(grRet["level"]) == 1):
+                self._set_output_value(self.PIN_O_SPREWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 2):
+                self._set_output_value(self.PIN_O_SLV1STR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 3):
+                self._set_output_value(self.PIN_O_SLV2STR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 4):
+                self._set_output_value(self.PIN_O_SLV3STR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 5):
+                self._set_output_value(self.PIN_O_SLV4STR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 10):
+                self._set_output_value(self.PIN_O_SHEATWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+            elif(int(grRet["level"]) == 20):
+                self._set_output_value(self.PIN_O_SUVWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
+
             # determine if warn window is active
             # time is provided as us but function demands s
             # "start":1578765600 000,"end":1578823200 000
+            global m_bWarnActive
             currentTime = time.localtime()
             if ((time.localtime(nEnd / 1000) > currentTime) and
                 (currentTime > time.localtime(nStart / 1000))):
-                self._set_output_value(self.PIN_O_BACTIVE, True)
+                # sbc
+                if (m_bWarnActive == False):
+                    self._set_output_value(self.PIN_O_BACTIVE, True)
+                    m_bWarnActive = True
             else:
-                self._set_output_value(self.PIN_O_BACTIVE, False)
+                # sbc
+                if (m_bWarnActive == True):
+                    self._set_output_value(self.PIN_O_BACTIVE, False)
+                    m_bWarnActive = False
 
         # reset data if json does not contain city data
         else:
+            self.DEBUG.add_message("No data found in json file for requested region.")
+            
             if (m_bValidData == True):
                 m_bValidData = False
                 self._set_output_value(self.PIN_O_SHEADLINE, "")
@@ -193,4 +234,11 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
                 self._set_output_value(self.PIN_O_FLEVEL, 0)
                 self._set_output_value(self.PIN_O_BACTIVE, False)
                 self._set_output_value(self.PIN_O_BERROR, False)
+                self._set_output_value(self.PIN_O_SHEATWRNSTR, "")
+                self._set_output_value(self.PIN_O_SLV1STR, "")
+                self._set_output_value(self.PIN_O_SLV2STR, "")
+                self._set_output_value(self.PIN_O_SLV3STR, "")
+                self._set_output_value(self.PIN_O_SLV4STR, "")
+                self._set_output_value(self.PIN_O_SPREWRNSTR, "")
+                self._set_output_value(self.PIN_O_SUVWRNSTR, "")
                 self._set_output_value(self.PIN_O_SALLWRNSTR, "")
