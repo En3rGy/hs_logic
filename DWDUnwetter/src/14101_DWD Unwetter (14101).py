@@ -74,26 +74,34 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
         return response_data
 
     def getCityJson(self, sJson, sCityId):
-        sPattern = '.*"' + sCityId + '":(\[.*?\])'
-        reMatch = re.match(sPattern, sJson)
-        if (reMatch):
-            sCityJson = reMatch.group(1)
-            return sCityJson
-        else:
-            return None
+        prog = re.compile('"' + sCityId + '":\\[(.*?)\\]')
+        reMatches = prog.finditer(sJson)
+        res = "["
+        i = 0
+
+        for x in reMatches:
+            res = res + x.group(1) + ","
+            i = i + 1
+
+        if (i == 0):
+            return "[]"
+
+        res = res[0:len(res)-1]
+        res = res + "]"
+        return res
 
     # gets the element nIdx of the list grJson
     def getMaxWarnLvl(self, grWarningsLst):
         nMaxLvl = 0
         nIdxMaxLvl = -1
-        
+
         for i in range(0, len(grWarningsLst)):
             nLevel = self.getVal(grWarningsLst[i], "level")
-            
+
             if (nLevel>nMaxLvl) and (nLevel<=10) and (nLevel > 0):
                 nMaxLvl = nLevel
                 nIdxMaxLvl = i
-        
+
         return {"level":nMaxLvl, "idx":nIdxMaxLvl}
 
     def getVal(self, sJson, sKey):
@@ -128,15 +136,13 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
     def on_input_value(self, index, value):
         data = ""
         cityJson = "---"
-        global m_sCityId
-        global m_bValidData
-        m_sCityId = self._get_input_value(self.PIN_I_SCITYID)
+        self.m_sCityId = self._get_input_value(self.PIN_I_SCITYID)
 
         # retrieve city id if not done before
-        if (m_sCityId == ""):
-            m_sCityId = self.getCityId(self._get_input_value(self.PIN_I_SCITY))
+        if (self.m_sCityId == ""):
+            self.m_sCityId = self.getCityId(self._get_input_value(self.PIN_I_SCITY))
 
-        if (m_sCityId == "0"):
+        if (self.m_sCityId == "0"):
             self._set_output_value(self.PIN_O_BERROR, True)
             self.DEBUG.add_message("Could not retrieve City Id")
             return
@@ -148,7 +154,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
 
         # retrieve city data 
         if (cityJson != None):
-            m_bValidData = True
+            self.m_bValidData = True
             
             self._set_output_value(self.PIN_O_SJSON, cityJson)
 
@@ -162,7 +168,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
                 return
 
             grRet = self.getMaxWarnLvl(grWarningsLst)
-            nIdx = grRet["idx"]
+            nIdx = grRet["idx"] #{"level":nMaxLvl, "idx":nIdxMaxLvl}
 
             sHeadline = self.getVal(grWarningsLst[nIdx], "headline")
             sDesrc = self.getVal(grWarningsLst[nIdx], "description")
@@ -206,26 +212,25 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             # determine if warn window is active
             # time is provided as us but function demands s
             # "start":1578765600 000,"end":1578823200 000
-            global m_bWarnActive
             currentTime = time.localtime()
             if ((time.localtime(nEnd / 1000) > currentTime) and
                 (currentTime > time.localtime(nStart / 1000))):
                 # sbc
-                if (m_bWarnActive == False):
+                if (self.m_bWarnActive == False):
                     self._set_output_value(self.PIN_O_BACTIVE, True)
-                    m_bWarnActive = True
+                    self.m_bWarnActive = True
             else:
                 # sbc
-                if (m_bWarnActive == True):
+                if (self.m_bWarnActive == True):
                     self._set_output_value(self.PIN_O_BACTIVE, False)
-                    m_bWarnActive = False
+                    self.m_bWarnActive = False
 
         # reset data if json does not contain city data
         else:
             self.DEBUG.add_message("No data found in json file for requested region.")
             
-            if (m_bValidData == True):
-                m_bValidData = False
+            if (self.m_bValidData == True):
+                self.m_bValidData = False
                 self._set_output_value(self.PIN_O_SHEADLINE, "")
                 self._set_output_value(self.PIN_O_SDESCR, "")
                 self._set_output_value(self.PIN_O_SINSTR, "")
