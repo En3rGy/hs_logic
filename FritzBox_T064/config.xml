@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <modules>
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.1">
+            <inputs>
+				<input type="string" const_name="sUId" init_value="">Benutzer</input>
+                <input type="string" const_name="sPW" init_value="">Passwort</input>				
+				<input type="number" const_name="bWifi1On" init_value="0">WLAN 1 E/A</input>
+				<input type="number" const_name="bWifi2On" init_value="0">WLAN 2 E/A</input>		
+				<input type="number" const_name="bWifi3On" init_value="0">WLAN 3 E/A</input>
+				<input type="number" const_name="bWifi4On" init_value="0">WLAN 4 E/A</input>
+            </inputs>
+            <outputs>
+				<output type="string" const_name="sWifi1SSID" init_value="">SSID WLAN 1</output>			
+				<output type="number" const_name="bRmWlan1OnOff" init_value="0">RM WLAN 1 E/A</output>
+				<output type="string" const_name="sWifi2SSID" init_value="">SSID WLAN 2</output>			
+				<output type="number" const_name="bRmWlan2OnOff" init_value="0">RM WLAN 2 E/A</output>			
+				<output type="string" const_name="sWifi3SSID" init_value="">SSID WLAN 3</output>			
+				<output type="number" const_name="bRmWlan3OnOff" init_value="0">RM WLAN 3 E/A</output>		
+				<output type="string" const_name="sWifi4SSID" init_value="">SSID WLAN 4</output>			
+				<output type="number" const_name="bRmWlan4OnOff" init_value="0">RM WLAN 4 E/A</output>						
+            </outputs>
+			<remanent_variables>
+            </remanent_variables>
+            <imports>
+            </imports>		
+        </module>	
+    </modules>
+</config>

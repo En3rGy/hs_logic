@@ -84,7 +84,7 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             i = i + 1
 
         if (i == 0):
-            return "[]"
+            return None
 
         res = res[0:len(res)-1]
         res = res + "]"
@@ -129,6 +129,14 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
             sCityId = reMatch.group(1)
 
         return sCityId
+
+    # determine if warn window is active
+    # time is provided as us but function demands s
+    # "start":1578765600 000,"end":1578823200 000
+    def isWarningActive(self, nStart, nEnd):
+        currentTime = time.localtime()
+        return ((time.localtime(nEnd / 1000) > currentTime) and
+            (currentTime > time.localtime(nStart / 1000)))
 
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
@@ -210,20 +218,11 @@ class DWDUnwetter_14101_14101(hsl20_3.BaseModule):
                 self._set_output_value(self.PIN_O_SUVWRNSTR, sAllWarnings.encode("ascii", "xmlcharrefreplace"))
 
             # determine if warn window is active
-            # time is provided as us but function demands s
-            # "start":1578765600 000,"end":1578823200 000
-            currentTime = time.localtime()
-            if ((time.localtime(nEnd / 1000) > currentTime) and
-                (currentTime > time.localtime(nStart / 1000))):
-                # sbc
-                if (self.m_bWarnActive == False):
-                    self._set_output_value(self.PIN_O_BACTIVE, True)
-                    self.m_bWarnActive = True
-            else:
-                # sbc
-                if (self.m_bWarnActive == True):
-                    self._set_output_value(self.PIN_O_BACTIVE, False)
-                    self.m_bWarnActive = False
+            bWarnActive = self.isWarningActive(nStart, nEnd)
+            # sbc
+            if (self.m_bWarnActive != bWarnActive):
+                self._set_output_value(self.PIN_O_BACTIVE, bWarnActive)
+                self.m_bWarnActive = bWarnActive
 
         # reset data if json does not contain city data
         else:

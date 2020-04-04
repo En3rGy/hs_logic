@@ -1,0 +1,159 @@
+<body>
+<h1>Fritz TR-064 (14102)</h1>
+<p>Baustein zur Steuerung der FritzBox via TR-064, z.B. zur Konfiguration des WLAN</p>
+<p>Die TR-064 Schnittstelle muss über dir Fritz!Box Web-Oberfläche ggf. erst aktiviert werden:<br>
+<ol>
+<li>Expertenansicht aktivieren</li>
+<li>Heimnetz - Heimnetzübersicht - Netzwerkeinstellungen</li>
+<li>Zugriff für Anwendungen zulassen aktivieren</li>
+</ol>
+AVM bietet unter der Rubrik <a href="https://avm.de/service/schnittstellen/">Schnittstellen</a> - Apps/TR-064 viele Informationen über die Möglichkeiten.</p>
+<p>Zur Nummerierung der WLAN Eingänge aus der AVM Dokumentation:<br>
+<i>If the device supports WLAN one service is listed (service #1). If the device additionally supports a 
+second physical access point support 2.4 GHz and 5 GHz, one more service is listed 
+(service #2). If a third physical access point is supported, an additional service is listed 
+(service #3).  If the device supports a logical Access Point for guests, one more service is 
+listed (service #2, #3 or #4).</i></p>
+
+<table>
+ <tr>
+  <td>Baustein Id:</td>
+  <td>14102</td>
+ </tr>
+ <tr>
+  <td>Kategorie:</td>
+  <td>Datenaustausch</td>
+ </tr>
+  <tr>
+  <td>Gültigkeit der Hilfe:</td>
+  <td>Bausteinversion 0.01</td>
+ </tr>
+</table>
+
+
+<h2 >Eingänge</h2>
+
+<table border=1>
+ <tr>
+  <td><b>Eingang</b></td>
+  <td><b>Initwert</b></td>
+  <td><b>Beschreibung</b></td>
+ </tr>
+ <tr>
+  <td>Benutzer</td>
+  <td></td>
+  <td>Benutzername eines Fritz!Box-Zugangs.</td>
+ </tr>
+ <tr>
+ <td>Passwort</td>
+  <td></td>
+  <td>Passwort des Fritz!Box-Zugangs.</td>
+ </tr> 
+ <td>WLAN 1 E/A</td>
+  <td>0</td>
+  <td>Ein-/Ausschalten (1/0) des WLAN 1-Signals.</td>
+ </tr>  
+ <td>WLAN 2 E/A</td>
+  <td>0</td>
+  <td>Ein-/Ausschalten (1/0) des WLAN 2-Signals.</td>
+ </tr>
+ <td>WLAN 3 E/A</td>
+  <td>0</td>
+  <td>Ein-/Ausschalten (1/0) des WLAN 3-Signals.</td>
+ </tr>  
+ <td>WLAN 4 E/A</td>
+  <td>0</td>
+  <td>Ein-/Ausschalten (1/0) des WLAN 4-Signals.</td>
+ </tr> 
+</table>
+
+<h2>Ausgänge</h2>
+
+<table border=1>
+ <tr>
+  <td><b>Ausgang</b></td>
+  <td><b>Initwert</b></td>
+  <td><b>Beschreibung</b></td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 1</td>
+  <td></td>
+  <td>###</td>
+ </tr>
+ <tr>
+  <td>RM WLAN 1 E/A</td>
+  <td>0</td>
+  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 1 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 2</td>
+  <td></td>
+  <td>###</td>
+ </tr>
+ <tr>
+  <td>RM WLAN 2 E/A</td>
+  <td>0</td>
+  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 2 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 3</td>
+  <td></td>
+  <td>###</td>
+ </tr>
+ <tr>
+  <td>RM WLAN 3 E/A</td>
+  <td>0</td>
+  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 3 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 4</td>
+  <td></td>
+  <td>###</td>
+ </tr>
+ <tr>
+  <td>RM WLAN 4 E/A</td>
+  <td>0</td>
+  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 4 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr> 
+</table>
+
+<h2>Sonstiges</h2>
+
+<table>
+ <tr>
+  <td>Neuberechnung beim Start</td>
+  <td>Nein</td>
+ </tr>
+ <tr>
+  <td>Baustein ist remanent</td>
+  <td>Nein</td>
+ </tr>
+</table>
+
+<h3>Change Log</h3>
+<ul>
+  <li>v0.01
+    <ul>
+	  <li>Initiales Release</li>
+	</ul>
+  </li>
+</ul>
+
+<h3>Open Issues / Known Bugs</h3>
+<ul>
+ <li>Ergänzen weiterer Services / Aktionen.</li>
+ <li>Next-Challenge-Daten nutzen (statt bei jeder Aktion neue anzufordern).</li>
+ <li>Gastzugang automatisch bestimmen und "Gast E/A" als separaten Eingang anbieten.</li>
+</ul>
+
+<h3>Code</h3>
+
+Der Python-Code des Bausteins befindet sich in der hslz Datei oder auf <a href="https://github.com/En3rGy/hs_logic">github</a>.
+
+<h3>Lizenz</h3>
+
+<p>Copyright 2020 T. Paul</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>

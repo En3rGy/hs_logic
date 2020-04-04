@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="11081" name="Fritz DECT200 (11081)" version="0.17">
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="11081" name="Fritz DECT200 (11081)" version="0.18">
             <inputs>
                 <input type="string" const_name="sXML" init_value="">XML</input>
 				<input type="string" const_name="sSid" init_value="">SID</input>
@@ -18,7 +18,7 @@
 				<output type="number" const_name="nZaehlerWh" init_value="0">RM Akt. Zaehlerst. Wh</output>
 				<output type="number" const_name="nTemp" init_value="0">RM Akt. Temp.</output>				
                 <output type="string" const_name="sSid" init_value="">SID</output>
-				<output type="string" const_name="sHtml" init_value="">XML</output>
+				<output type="string" const_name="sXml" init_value="">XML</output>
             </outputs>               
 			<remanent_variables>
             </remanent_variables>

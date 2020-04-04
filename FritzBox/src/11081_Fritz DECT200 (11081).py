@@ -29,7 +29,7 @@ class FritzDECT200_11081_11081(hsl20_3.BaseModule):
         self.PIN_O_NZAEHLERWH=3
         self.PIN_O_NTEMP=4
         self.PIN_O_SSID=5
-        self.PIN_O_SHTML=6
+        self.PIN_O_SXML=6
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -194,6 +194,7 @@ class FritzDECT200_11081_11081(hsl20_3.BaseModule):
                     self._set_output_value(self.PIN_O_NTEMP, ret["temp"])
 
                 if grXml["code"] == 200:
+                    self._set_output_value(self.PIN_O_SXML, grXml["data"])
                     return
                 else:
                     self.DEBUG.add_message("Error processing XML, code:" +
