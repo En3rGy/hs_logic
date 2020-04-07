@@ -6,6 +6,7 @@ import urlparse
 import socket
 import struct
 import hashlib
+import threading
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -31,6 +32,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.PIN_I_SMAC4=11
         self.PIN_I_STELNO=12
         self.PIN_I_BDIAL=13
+        self.PIN_I_NUPDATERATE=14
         self.PIN_O_SWIFI1SSID=1
         self.PIN_O_BRMWLAN1ONOFF=2
         self.PIN_O_SWIFI2SSID=3
@@ -300,6 +302,68 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.m_guestWifiIdx = len(wlanIF)
         self.DEBUG.set_value("14102 Guest WIFI Index", self.m_guestWifiIdx)
 
+
+    def updateStatus(self):
+        self.DEBUG.add_message("Status requested")
+        
+        nInterval = self._get_input_value(self.PIN_I_NUPDATERATE)
+        if (nInterval > 0):
+            
+            #work with wifi
+            for nWifiIdx in range(1, (self.m_guestWifiIdx + 1)):
+                serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:WLANConfiguration:" + str(nWifiIdx))
+
+                #get wifi status
+                attrList = {} #{"NewEnable":"", "NewStatus":"", "NewSSID":""}
+                data = self.setSoapAction(self.m_url_parsed, serviceData, "GetInfo", attrList)
+    
+                nOn = int(((data["NewStatus"] == "Up") and (data["NewEnable"] == '1')))
+        
+                if nWifiIdx == 1:
+                    self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
+                    self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
+                
+                elif nWifiIdx == 2:
+                    self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, nOn)
+                    self._set_output_value(self.PIN_O_SWIFI2SSID, data["NewSSID"])
+        
+                elif nWifiIdx == 3:
+                    self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
+                    self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
+                
+                elif nWifiIdx == self.m_guestWifiIdx:
+                    self._set_output_value(self.PIN_O_BRMWLANGUESTONOFF, nOn)
+                    self._set_output_value(self.PIN_O_SWIFIGUESTSSID, data["NewSSID"])
+            ###End Wifi
+
+            ###MAC attendence
+            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:Hosts:1")
+            for i in range(self.PIN_I_SMAC1, (self.PIN_I_SMAC4 + 1)):
+                value = self._get_input_value(i)
+                
+                if value == "":
+                    continue
+
+                attrList = {"NewMACAddress" : value}
+                data = self.setSoapAction(self.m_url_parsed, serviceData, "GetSpecificHostEntry", attrList)
+
+                nRet = 0
+                if (data):
+                    nRet = int(data["NewActive"])
+    
+                if (i == self.PIN_I_SMAC1):
+                    self._set_output_value(self.PIN_O_SMAC1AVAIL, nRet)
+                elif (i == self.PIN_I_SMAC2):
+                    self._set_output_value(self.PIN_O_SMAC2AVAIL, nRet)
+                elif (i == self.PIN_I_SMAC3):
+                    self._set_output_value(self.PIN_O_SMAC3AVAIL, nRet)
+                elif (i == self.PIN_I_SMAC4):
+                    self._set_output_value(self.PIN_O_SMAC4AVAIL, nRet)
+            ### end mac discovery
+            
+            t = threading.Timer(nInterval, self.updateStatus).start()
+
+
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
 
@@ -309,7 +373,8 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.m_sUId = self._get_input_value(self.PIN_I_SUID)
         self.m_sPw = self._get_input_value(self.PIN_I_SPW)
         nWifiIdx = 0
-        sHsIP = self._get_input_value( self.PIN_I_SHSIP)
+        sHsIP = self._get_input_value(self.PIN_I_SHSIP)
+        nInterval = self._get_input_value(self.PIN_I_NUPDATERATE)
         ############################################
         
         #self.DEBUG.add_message("Set switch: " + str(self._get_input_value(self.PIN_I_BONOFF)))
@@ -348,8 +413,12 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 self.m_url_parsed = urlparse.urlparse(url)
                 self.DEBUG.add_message("14102 Fritz!Box URL: " + self.m_url_parsed.geturl())
 
+        if (index == self.PIN_I_NUPDATERATE):
+            if (nInterval > 0):
+                self.updateStatus()
+
         #work with wifi
-        if (index == self.PIN_I_BWIFI1ON or index == self.PIN_I_BWIFI2ON or index == self.PIN_I_BWIFI3ON or index == self.PIN_I_BWIFIGUESTON):
+        elif (index == self.PIN_I_BWIFI1ON or index == self.PIN_I_BWIFI2ON or index == self.PIN_I_BWIFI3ON or index == self.PIN_I_BWIFIGUESTON):
 
             bWifiOn = int(value)
             if (index == self.PIN_I_BWIFI1ON):
@@ -385,7 +454,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
             
             elif nWifiIdx == 2:
                 self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, nOn)
-                self._set_output_value(self.PIN_O_SWIF2SSID, data["NewSSID"])
+                self._set_output_value(self.PIN_O_SWIFI2SSID, data["NewSSID"])
     
             elif nWifiIdx == 3:
                 self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
@@ -398,10 +467,10 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         ###End Wifi
         
         elif (index == self.PIN_I_SMAC1 or index == self.PIN_I_SMAC2 or index == self.PIN_I_SMAC3 or index == self.PIN_I_SMAC4):
-            serviceData = test.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:Hosts:1")
+            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:Hosts:1")
 
             attrList = {"NewMACAddress" : value}
-            data = test.setSoapAction(self.m_url_parsed, serviceData, "GetSpecificHostEntry", attrList)
+            data = self.setSoapAction(self.m_url_parsed, serviceData, "GetSpecificHostEntry", attrList)
 
             nRet = 0
             if (data):
@@ -418,7 +487,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         ### end mac discovery
 
         elif (index == self.PIN_I_BDIAL):
-            serviceData = test.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:X_VoIP:1")
+            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:X_VoIP:1")
 
             if (value == 1): 
                 attrList = {"NewX_AVM-DE_PhoneNumber" : self._get_input_value(self.PIN_I_STELNO)}
