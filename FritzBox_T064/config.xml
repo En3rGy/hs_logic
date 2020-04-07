@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.2">
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.3">
             <inputs>
 				<input type="string" const_name="sHSIp" init_value="">1: HS IP</input>
 				<input type="string" const_name="sUId" init_value="">1: Benutzer</input>
@@ -25,7 +25,7 @@
 				<output type="string" const_name="sWifi3SSID" init_value="">2: SSID WLAN 3</output>			
 				<output type="number" const_name="bRmWlan3OnOff" init_value="0">2: RM WLAN 3 E/A</output>		
 				<output type="string" const_name="sWifiGuestSSID" init_value="">2: SSID Gast-WLAN</output>			
-				<output type="number" const_name="bRmWlanGuestOnOff" init_value="0">2: RM Gast-WLAN 4 E/A</output>
+				<output type="number" const_name="bRmWlanGuestOnOff" init_value="0">2: RM Gast-WLAN E/A</output>
 				<output type="number" const_name="sMac1Avail" init_value="0">3: MAC-Addr 1 angem.</output>
 				<output type="number" const_name="sMac2Avail" init_value="0">3: MAC-Addr 2 angem.</output>
 				<output type="number" const_name="sMac3Avail" init_value="0">3: MAC-Addr 3 angem.</output>
