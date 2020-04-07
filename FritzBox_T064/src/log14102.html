@@ -8,12 +8,19 @@
 <li>Zugriff für Anwendungen zulassen aktivieren</li>
 </ol>
 AVM bietet unter der Rubrik <a href="https://avm.de/service/schnittstellen/">Schnittstellen</a> - Apps/TR-064 viele Informationen über die Möglichkeiten.</p>
+<h3>2: Configuration WLAN</h3>
 <p>Zur Nummerierung der WLAN Eingänge aus der AVM Dokumentation:<br>
 <i>If the device supports WLAN one service is listed (service #1). If the device additionally supports a 
 second physical access point support 2.4 GHz and 5 GHz, one more service is listed 
 (service #2). If a third physical access point is supported, an additional service is listed 
 (service #3).  If the device supports a logical Access Point for guests, one more service is 
 listed (service #2, #3 or #4).</i></p>
+<h3>3: Anwesenheitserkennung</h3>
+Über die Ein-/Ausgänge kann für Geräte Anhand ihrer MAC Addresse festgestellt werden, ob sie an der Fritz!Box angemeldet sind.</p> 
+<h3>4: Wählhilfe</h3>
+<p>Zur Nutzung der Anruf-Funktion muss die Wahlhilfe aktiviert sein (Telefonie - Anrufe - Wählhilfe). 
+Die Anruffunktion stellt dabei eine Verbindung her, zwischen dem Telefon, welches unter "Wählhilfe" 
+in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein übergeben wird.</p>
 
 <table>
  <tr>
@@ -26,7 +33,7 @@ listed (service #2, #3 or #4).</i></p>
  </tr>
   <tr>
   <td>Gültigkeit der Hilfe:</td>
-  <td>Bausteinversion 0.01</td>
+  <td>Bausteinversion 0.02</td>
  </tr>
 </table>
 
@@ -35,9 +42,16 @@ listed (service #2, #3 or #4).</i></p>
 
 <table border=1>
  <tr>
+  <td></td>
   <td><b>Eingang</b></td>
   <td><b>Initwert</b></td>
   <td><b>Beschreibung</b></td>
+ </tr>
+ <tr>
+  <td rowspan="3">1</td>
+  <td>HS IP</td>
+  <td></td>
+  <td>IP des Homeservers über die eine Verbindung zur Fritz!Box aufgebaut wird.</td>
  </tr>
  <tr>
   <td>Benutzer</td>
@@ -45,37 +59,72 @@ listed (service #2, #3 or #4).</i></p>
   <td>Benutzername eines Fritz!Box-Zugangs.</td>
  </tr>
  <tr>
- <td>Passwort</td>
+  <td>Passwort</td>
   <td></td>
   <td>Passwort des Fritz!Box-Zugangs.</td>
  </tr> 
- <td>WLAN 1 E/A</td>
+ <tr>
+  <td rowspan="4">2</td> 
+  <td>WLAN 1 E/A</td>
   <td>0</td>
-  <td>Ein-/Ausschalten (1/0) des WLAN 1-Signals.</td>
+  <td rowspan="4">Ein-/Ausschalten (1/0) des WLAN-Signals.</td>
  </tr>  
- <td>WLAN 2 E/A</td>
+ <tr>
+  <td>WLAN 2 E/A</td>
   <td>0</td>
-  <td>Ein-/Ausschalten (1/0) des WLAN 2-Signals.</td>
  </tr>
- <td>WLAN 3 E/A</td>
+ <tr>
+  <td>WLAN 3 E/A</td>
   <td>0</td>
-  <td>Ein-/Ausschalten (1/0) des WLAN 3-Signals.</td>
- </tr>  
- <td>WLAN 4 E/A</td>
+ </tr>
+ <tr>
+  <td>Gast-WLAN E/A</td>
   <td>0</td>
-  <td>Ein-/Ausschalten (1/0) des WLAN 4-Signals.</td>
- </tr> 
+ </tr>
+ <tr>
+  <td rowspan="4">3</td>  
+  <td>MAC-Addr 1</td>
+  <td></td>
+  <td rowspan="4">MAC-Adresse zur Anwesenheitserkennung. 
+  Die Anwesenheitsprüfung wird ausgeführt, wenn der Eingang geschrieben wird. 
+  Die MAC-Adresse muss im Format ab:cd:ef:gh:ij:kl angegeben werden.</td>
+ </tr>
+ <tr> 
+  <td>3: MAC-Addr 2</td>
+  <td></td>
+ </tr>
+ <tr> 
+  <td>MAC-Addr 3</td>
+  <td></td>
+ </tr>
+ <tr> 
+  <td>MAC-Addr 4</td>
+  <td></td>
+ </tr>
+ <tr> 
+  <td rowspan="2">4</td> 
+  <td>Rufnummer</td>
+  <td>0</td>
+  <td>Rufnummer, die gewählt werden soll.</td>
+ </tr>
+ <tr> 
+  <td>Dial/Hang-Up (1/0)</td>
+  <td>0</td>
+  <td>Wählt die Nummer bei 1, beendet die Verbindung bei 0</td>
+ </tr>   
 </table>
 
 <h2>Ausgänge</h2>
 
 <table border=1>
  <tr>
+  <td></td>
   <td><b>Ausgang</b></td>
   <td><b>Initwert</b></td>
   <td><b>Beschreibung</b></td>
  </tr>
  <tr>
+  <td rowspan="8">2</td>
   <td>SSID WLAN 1</td>
   <td></td>
   <td>###</td>
@@ -106,14 +155,31 @@ listed (service #2, #3 or #4).</i></p>
   <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 3 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
  </tr>
  <tr>
-  <td>SSID WLAN 4</td>
+  <td>SSID Gast-WLAN</td>
   <td></td>
   <td>###</td>
  </tr>
- <tr>
-  <td>RM WLAN 4 E/A</td>
+  <td>RM Gast-WLAN</td>
   <td>0</td>
-  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 4 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 2 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr> 
+ <tr>
+  <td rowspan="4">3</td> 
+  <td>MAC-Addr 1 angem.</td>
+  <td>0</td>
+  <td rowspan="4">1 wenn Gerät anwesend ist, 0 wenn nicht</td>
+ </tr> 
+<tr>
+  <td>MAC-Addr 2 angem.</td>
+  <td>0</td>
+ </tr> 
+ <tr>
+  <td>MAC-Addr 3 angem.</td>
+  <td>0</td>
+ </tr> 
+ <tr>
+  <td>MAC-Addr 4 angem.</td>
+  <td>0</td>
  </tr> 
 </table>
 
@@ -132,6 +198,13 @@ listed (service #2, #3 or #4).</i></p>
 
 <h3>Change Log</h3>
 <ul>
+  <li>v0.02
+    <ul>
+	  <li>Anwesenheitserkennung</li>
+	  <li>Wählhilfe</li>
+	  <li>Autmatische Erkennung Gast-WLAN</li>
+	</ul>
+  </li>
   <li>v0.01
     <ul>
 	  <li>Initiales Release</li>
@@ -141,9 +214,8 @@ listed (service #2, #3 or #4).</i></p>
 
 <h3>Open Issues / Known Bugs</h3>
 <ul>
+ <li>Automatisches Erkennen der IP des HS.</li>
  <li>Ergänzen weiterer Services / Aktionen.</li>
- <li>Next-Challenge-Daten nutzen (statt bei jeder Aktion neue anzufordern).</li>
- <li>Gastzugang automatisch bestimmen und "Gast E/A" als separaten Eingang anbieten.</li>
 </ul>
 
 <h3>Code</h3>

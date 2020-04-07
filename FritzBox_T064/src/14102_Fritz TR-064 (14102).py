@@ -6,6 +6,7 @@ import urlparse
 import socket
 import struct
 import hashlib
+from _socket import AI_NUMERICHOST
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -18,20 +19,31 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         hsl20_3.BaseModule.__init__(self, homeserver_context, "hsl20_3_FritzBox")
         self.FRAMEWORK = self._get_framework()
         self.LOGGER = self._get_logger(hsl20_3.LOGGING_NONE,())
-        self.PIN_I_SUID=1
-        self.PIN_I_SPW=2
-        self.PIN_I_BWIFI1ON=3
-        self.PIN_I_BWIFI2ON=4
-        self.PIN_I_BWIFI3ON=5
-        self.PIN_I_BWIFI4ON=6
+        self.PIN_I_SHSIP=1
+        self.PIN_I_SUID=2
+        self.PIN_I_SPW=3
+        self.PIN_I_BWIFI1ON=4
+        self.PIN_I_BWIFI2ON=5
+        self.PIN_I_BWIFI3ON=6
+        self.PIN_I_BWIFIGUESTON=7
+        self.PIN_I_SMAC1=8
+        self.PIN_I_SMAC2=9
+        self.PIN_I_SMAC3=10
+        self.PIN_I_SMAC4=11
+        self.PIN_I_STELNO=12
+        self.PIN_I_BDIAL=13
         self.PIN_O_SWIFI1SSID=1
         self.PIN_O_BRMWLAN1ONOFF=2
         self.PIN_O_SWIFI2SSID=3
         self.PIN_O_BRMWLAN2ONOFF=4
         self.PIN_O_SWIFI3SSID=5
         self.PIN_O_BRMWLAN3ONOFF=6
-        self.PIN_O_SWIFI4SSID=7
-        self.PIN_O_BRMWLAN4ONOFF=8
+        self.PIN_O_SWIFIGUESTSSID=7
+        self.PIN_O_BRMWLANGUESTONOFF=8
+        self.PIN_O_SMAC1AVAIL=9
+        self.PIN_O_SMAC2AVAIL=10
+        self.PIN_O_SMAC3AVAIL=11
+        self.PIN_O_SMAC4AVAIL=12
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -44,6 +56,9 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
     m_sNonce = ""
     m_sRealm = ""
     m_sAuth = ""
+    m_sUId = ""
+    m_sPw = ""
+    m_guestWifiIdx = 0
 
     def getServiceData(self, p_sStr, p_sServiceType):
         try:
@@ -51,7 +66,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
             sControlURL = re.findall( '<serviceType>' + p_sServiceType + '<\\/serviceType>.*?<controlURL>(.*?)<\\/controlURL>', p_sStr, flags=re.S)[0]
             sEventSubURL = re.findall( '<serviceType>' + p_sServiceType + '<\\/serviceType>.*?<eventSubURL>(.*?)<\\/eventSubURL>', p_sStr, flags=re.S)[0]
             sSCPDURL = re.findall( '<serviceType>' + p_sServiceType + '<\\/serviceType>.*?<SCPDURL>(.*?)<\\/SCPDURL>', p_sStr, flags=re.S)[0]
-            
+
             return { "serviceType": p_sServiceType,
                      "serviceId": sServiceId,
                      "controlURL": sControlURL,
@@ -72,13 +87,13 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
 
 
     def interface_addresses(self, family=socket.AF_INET):
-        for fam, _, _, _, sockaddr in socket.getaddrinfo('', None):
+        for fam, _, _, _, sockaddr in socket.getaddrinfo('', None, 0, 0, 0, socket.AI_NUMERICHOST):
             if family == fam:
                 yield sockaddr[0]
 
 
     # @return urlparse
-    def discover(self):
+    def discover(self, p_sHsIP):
 
         #SSDP request msg from application
         MCAST_MSG = ('M-SEARCH * HTTP/1.1\r\n' +
@@ -90,42 +105,42 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         MCAST_GRP = '239.255.255.250'
         MCAST_PORT = 1900
 
-        for addr in self.interface_addresses():
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    
-            # time to life fro multicast msg
-            ttl = struct.pack('b', 1)
-            sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
-            
-            # specify interface to use for multicast msg
-            sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(addr))
-    
-            sock.settimeout(1)
-    
-            try: 
-                sock.sendto(MCAST_MSG, (MCAST_GRP, MCAST_PORT))
-            except socket.error as e:
-                self.DEBUG.set_value("Error", "discover: " + str(e))
-                print (e)
-                sock.close()
-    
-            while True:
-                try:
-                    data = sock.recv(1024)
-                    
-                    url_unparsed = self.doRegex('LOCATION: (.*)(?:\\n\\r|\\r\\n)SERVER:.*FRITZ!Box', data)
-                    url_parsed = urlparse.urlparse(url_unparsed)
-    
-                    #(scheme='http', netloc='192.168.143.1:49000', path='/tr64desc.xml', params='', query='', fragment='')
-                    if url_parsed.netloc:
-                        sock.close()
-                        return url_parsed
-    
-                except socket.timeout:
-                    print ("Timeout")
-                    break
-    
+        #for addr in self.interface_addresses():
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+
+        # time to life fro multicast msg
+        ttl = struct.pack('b', 1)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
+        
+        # specify interface to use for multicast msg
+        sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(p_sHsIP))
+
+        sock.settimeout(1)
+
+        try: 
+            sock.sendto(MCAST_MSG, (MCAST_GRP, MCAST_PORT))
+        except socket.error as e:
+            self.DEBUG.set_value("Error", "discover: " + str(e))
+            print (e)
             sock.close()
+
+        while True:
+            try:
+                data = sock.recv(1024)
+                
+                url_unparsed = self.doRegex('LOCATION: (.*)(?:\\n\\r|\\r\\n)SERVER:.*FRITZ!Box', data)
+                url_parsed = urlparse.urlparse(url_unparsed)
+
+                #(scheme='http', netloc='192.168.143.1:49000', path='/tr64desc.xml', params='', query='', fragment='')
+                if url_parsed.netloc:
+                    sock.close()
+                    return url_parsed
+
+            except socket.timeout:
+                print ("Timeout")
+                break
+
+        sock.close()
 
 
     def getSecurityPort(self, p_url_parsed):
@@ -181,35 +196,23 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         return response_data
 
 
-    def calcAuthResp(self, p_sUid, p_sPw, p_sRealm, p_sNonce):
-        secret = hashlib.md5(p_sUid + ":" + p_sRealm + ":" + p_sPw)
-        response = hashlib.md5( secret.hexdigest() + ":" + p_sNonce)
-        return response.hexdigest()
-
-
-    def getSoapHeader(self, p_sData, p_sUId, p_sPw):
-        sAuthStat = self.doRegex('<Status>(.*?)<\\/Status>', p_sData)
+    def getSoapHeader(self):
         sHeader = ""
         
-        if (sAuthStat == ""):
+        if (self.m_sAuth == ""):
             sHeader = ('<s:Header>\n\t<h:InitChallenge ' +
                        'xmlns:h="http://soap-authentication.org/digest/2001/10/" ' +
                        's:mustUnderstand="1">\n\t\t' + 
-                       '<UserID>' + p_sUId + '</UserID>\n\t</h:InitChallenge >\n' +
+                       '<UserID>' + self.m_sUId + '</UserID>\n\t</h:InitChallenge >\n' +
                        '</s:Header>')
 
-        elif  (sAuthStat == "Unauthenticated"):
-            #Get Auth data
-            self.m_sNonce = self.doRegex("<Nonce>(.*?)<\\/Nonce>", p_sData)
-            self.m_sRealm = self.doRegex("<Realm>(.*?)<\\/Realm>", p_sData)
-            self.m_sAuth = self.calcAuthResp(p_sUId, p_sPw, self.m_sRealm, self.m_sNonce)
-            
+        else:
             sHeader = ('<s:Header>\n\t<h:ClientAuth ' +
                        'xmlns:h="http://soap-authentication.org/digest/2001/10/" ' +
                        's:mustUnderstand="1">' +
                        '\n\t\t<Nonce>' + self.m_sNonce + '</Nonce>' +
                        '\n\t\t<Auth>' + self.m_sAuth + '</Auth>' +
-                       '\n\t\t<UserID>' + p_sUId + '</UserID>' +
+                       '\n\t\t<UserID>' + self.m_sUId + '</UserID>' +
                        '\n\t\t<Realm>' + self.m_sRealm + '</Realm>\n\t</h:ClientAuth>\n</s:Header>')
 
         return sHeader
@@ -217,7 +220,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
 
     ## 
     ## @attr p_sFormerResp Response from a previous request
-    def getSopaReq(self, p_url_parsed, p_sUId, p_sPw, p_grServiceData, p_sAction, p_AttrList, p_sFormerResp):
+    def getSopaReq(self, p_url_parsed, p_grServiceData, p_sAction, p_AttrList):
 
         sUrl = (p_url_parsed.geturl() + p_grServiceData["controlURL"])
         url_parsed = urlparse.urlparse(sUrl)
@@ -227,7 +230,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                  'CONTENT-TYPE': 'text/xml; charset="utf-8"',
                  'SOAPACTION': '"' + p_grServiceData["serviceType"] + "#" + p_sAction + '"'}
 
-        sSoapHdr = self.getSoapHeader(p_sFormerResp, p_sUId, p_sPw)
+        sSoapHdr = self.getSoapHeader()
 
         data= ('<?xml version="1.0" encoding="utf-8"?>\n' +
                '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" ' +
@@ -243,22 +246,31 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         return urllib2.Request(url_parsed.geturl(), data = data, headers = htmlHdr)
 
 
-    def setSoapAction(self, url_parsed, p_sUId, p_sPw, p_grServiceData, p_sAction, p_AttrList, bSecure=False):
+    def getAuthData(self, p_sData):
+            self.m_sNonce = self.doRegex("<Nonce>(.*?)<\\/Nonce>", p_sData)
+            self.m_sRealm = self.doRegex("<Realm>(.*?)<\\/Realm>", p_sData)
+
+            secret = hashlib.md5(self.m_sUId + ":" + self.m_sRealm + ":" + self.m_sPw)
+            response = hashlib.md5( secret.hexdigest() + ":" + self.m_sNonce)
+
+            self.m_sAuth = response.hexdigest()
+            print ("\n" + self.m_sAuth + "\n")
+
+    def setSoapAction(self, url_parsed, p_grServiceData, p_sAction, p_AttrList, bSecure=False):
         # Build a SSL Context to disable certificate verification.
         ctx = ssl._create_unverified_context()
         response_data = ""
 
         for x in range(0, 2):
-            request = self.getSopaReq(url_parsed, p_sUId, p_sPw, p_grServiceData, p_sAction, p_AttrList, response_data)
-            #print "\n" + request.get_full_url()
-            #print request.header_items()
-            #print "\n" + request.get_data() + "\n"
+            request = self.getSopaReq(url_parsed, p_grServiceData, p_sAction, p_AttrList)
 
             try:
                 response = urllib2.urlopen(request, context=ctx)
                 response_data = response.read()
-                #print response_data
-                
+                print (response_data + "\n\n")
+
+                self.getAuthData(response_data)
+
                 sAuthStat = self.doRegex('<Status>(.*?)<\\/Status>', response_data)
 
                 if ( sAuthStat != "Unauthenticated"):
@@ -266,10 +278,11 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
     
             except urllib2.HTTPError as e:
                 response_data = e.read()
+                self.DEBUG.add_message("setSoapAction: " + response_data)
     
-            except Exception as e:
-                self.DEBUG.set_value("Error", "setSoapAction: " + str(e))
-                print ("setWifiActive loop" + str(x) + ": " + str(e))
+            #except Exception as e:
+            #    self.DEBUG.add_message("setSoapAction: " + str(e))
+            #    print ("setWifiActive loop" + str(x) + ": " + str(e))
 
         dic = {}
         response_data = self.doRegex('<u:' + p_sAction + 'Response.*?>(?:\\n|)(.*?)(?:\\n|)<\\/u:' + p_sAction + 'Response>', response_data)
@@ -283,32 +296,20 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         return dic
 
 
+    def getGuestWifiIdx(self):
+        wlanIF = re.findall("<serviceType>(urn:dslforum-org:service:WLANConfiguration:[0-9]<\\/serviceType>)", self.m_sServiceDscr, re.S)
+        self.m_guestWifiIdx = len(wlanIF)
+
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
 
 
     def on_input_value(self, index, value):
-        
-        #self.PIN_I_BWIFI1ON=4
-        #self.PIN_I_BWIFI2ON=5
-        
         ############################################
-        sUId = self._get_input_value(self.PIN_I_SUID)
-        sPw = self._get_input_value(self.PIN_I_SPW)
+        self.m_sUId = self._get_input_value(self.PIN_I_SUID)
+        self.m_sPw = self._get_input_value(self.PIN_I_SPW)
         nWifiIdx = 1
-        
-        bWifiOn = int(value)
-        if (index == self.PIN_I_BWIFI1ON):
-            nWifiIdx = 1
-            
-        elif (index== self.PIN_I_BWIFI2ON):
-            nWifiIdx = 2
-            
-        elif (index== self.PIN_I_BWIFI3ON):
-            nWifiIdx = 3
-
-        elif (index== self.PIN_I_BWIFI4ON):
-            nWifiIdx = 4
+        sHsIP = self._get_input_value( self.PIN_I_SHSIP)
         ############################################
         
         #self.DEBUG.add_message("Set switch: " + str(self._get_input_value(self.PIN_I_BONOFF)))
@@ -318,9 +319,8 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         if (index == self.PIN_I_SUID or index == self.PIN_I_SPW):
             return
 
-
         if self.m_url_parsed == "":
-            self.m_url_parsed = self.discover()
+            self.m_url_parsed = self.discover(sHsIP)
             #print "Discovery: \t" + url_parsed.geturl()
 
             if(not self.m_url_parsed):
@@ -329,52 +329,100 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 return
 
             self.m_sServiceDscr = self.getData(self.m_url_parsed.geturl())
-    
+            self.getGuestWifiIdx()
+
             self.m_url_parsed = urlparse.urlparse(self.m_url_parsed.scheme + "://" + self.m_url_parsed.netloc)
-            self.DEBUG.add_message("Fritz!Box URL " + self.m_url_parsed.geturl())
+            self.DEBUG.add_message("Fritz!Box URL: " + self.m_url_parsed.geturl())
 
             # work with device info
             serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:DeviceInfo:1")
-    
+
             # get security port
-            data = self.setSoapAction(self.m_url_parsed, sUId, sPw, serviceData, "GetSecurityPort", {})
-            #print "\n---" 
-            #print data 
-            #print "---\n"
-    
+            data = self.setSoapAction(self.m_url_parsed, serviceData, "GetSecurityPort", {})
+
             if not 'NewSecurityPort' in data:
                 self.DEBUG.add_message("Could retrieve security port from Fritz!Box")
             else:
                 sSPort = data['NewSecurityPort']
                 url = 'https://' + self.m_url_parsed.hostname + ":" + sSPort
                 self.m_url_parsed = urlparse.urlparse(url)
-                self.DEBUG.set_value("Fritz!Box URL", self.m_url_parsed.geturl())
+                self.DEBUG.add_message("Fritz!Box URL: " + self.m_url_parsed.geturl())
 
         #work with wifi
-        serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:WLANConfiguration:" + str(nWifiIdx))
+        if (index == self.PIN_I_BWIFI1ON or index == self.PIN_I_BWIFI2ON or index == self.PIN_I_BWIFI3ON or index == self.PIN_I_BWIFIGUESTON):
 
-        # switch on wifi
-        attrList = {"NewEnable" : str(bWifiOn)}
-        self.DEBUG.set_value("Requested Wifi-Status", ("idx: " + str(nWifiIdx) + "; On: " + str(bWifiOn)))
-        data = self.setSoapAction(self.m_url_parsed, sUId, sPw, serviceData, "SetEnable", attrList)
-        #print "\n---"
-        #print data
-        #print "---\n"
+            bWifiOn = int(value)
+            if (index == self.PIN_I_BWIFI1ON):
+                nWifiIdx = 1
+                
+            elif (index== self.PIN_I_BWIFI2ON):
+                nWifiIdx = 2
+                
+            elif (index== self.PIN_I_BWIFI3ON):
+                nWifiIdx = 3
+    
+            elif (index==self.PIN_I_BWIFIGUESTON):
+                nWifiId = self.m_guestWifiIdx
 
-        #get wifi status
-        attrList = {} #{"NewEnable":"", "NewStatus":"", "NewSSID":""}
-        data = self.setSoapAction(self.m_url_parsed, sUId, sPw, serviceData, "GetInfo", attrList)
-        #print "\n---" 
-        #print data 
-        #print "---\n"
-        #print "\n\nFinished."
-        nOn = ((data["NewStatus"] == "Up") and (data["NewEnable"] == '1'))
+            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:WLANConfiguration:" + str(nWifiIdx))
 
-        if nWifiIdx == 1:
-            self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
-            self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
+            # switch on wifi
+            attrList = {"NewEnable" : str(bWifiOn)}
+            self.DEBUG.set_value("Requested Wifi-Status", ("idx: " + str(nWifiIdx) + "; On: " + str(bWifiOn)))
+            data = self.setSoapAction(self.m_url_parsed, serviceData, "SetEnable", attrList)
+    
+            #get wifi status
+            attrList = {} #{"NewEnable":"", "NewStatus":"", "NewSSID":""}
+            data = self.setSoapAction(self.m_url_parsed, serviceData, "GetInfo", attrList)
+
+            nOn = ((data["NewStatus"] == "Up") and (data["NewEnable"] == '1'))
+    
+            if nWifiIdx == 1:
+                self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
+            
+            elif nWifiIdx == 2:
+                self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIF2SSID, data["NewSSID"])
+    
+            elif nWifiIdx == 3:
+                self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
+            
+            elif nWifiIdx == self.m_guestWifiIdx:
+                self._set_output_value(self.PIN_O_BRMWLANGUESTONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFIGUESTSSID, data["NewSSID"])
+                
+        ###End Wifi
         
-        elif nWifiIdx == 2:
-            self._set_output_value(self.PIN_I_BWIFI2ON, nOn)
-            self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, data["NewSSID"])
+        elif (index == self.PIN_I_SMAC1 or index == self.PIN_I_SMAC2 or index == self.PIN_I_SMAC3 or index == self.PIN_I_SMAC4):
+            serviceData = test.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:Hosts:1")
 
+            attrList = {"NewMACAddress" : value}
+            data = test.setSoapAction(self.m_url_parsed, serviceData, "GetSpecificHostEntry", attrList)
+
+            nRet = 0
+            if (data):
+                nRet = int(data["NewActive"])
+
+            if (index == self.PIN_I_SMAC1):
+                self._set_output_value(self.PIN_O_SMAC1AVAIL, nRet)
+            elif (index == self.PIN_I_SMAC2):
+                self._set_output_value(self.PIN_O_SMAC2AVAIL, nRet)
+            elif (index == self.PIN_I_SMAC3):
+                self._set_output_value(self.PIN_O_SMAC3AVAIL, nRet)
+            elif (index == self.PIN_I_SMAC4):
+                self._set_output_value(self.PIN_O_SMAC4AVAIL, nRet)
+        ### end mac discovery
+
+        elif (index == self.PIN_I_BDIAL):
+            serviceData = test.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:X_VoIP:1")
+
+            if (value == 1): 
+                attrList = {"NewX_AVM-DE_PhoneNumber" : self._get_input_value(self.PIN_I_STELNO)}
+                data = self.setSoapAction(self.m_url_parsed, serviceData, "X_AVM-DE_DialNumber", attrList)
+            
+            elif (value == 0):
+                attrList = {}
+                data = self.setSoapAction(self.m_url_parsed, serviceData, "X_AVM-DE_DialHangup", attrList)
+        ### end dial / call

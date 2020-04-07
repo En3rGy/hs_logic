@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.1">
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.2">
             <inputs>
-				<input type="string" const_name="sUId" init_value="">Benutzer</input>
-                <input type="string" const_name="sPW" init_value="">Passwort</input>				
-				<input type="number" const_name="bWifi1On" init_value="0">WLAN 1 E/A</input>
-				<input type="number" const_name="bWifi2On" init_value="0">WLAN 2 E/A</input>		
-				<input type="number" const_name="bWifi3On" init_value="0">WLAN 3 E/A</input>
-				<input type="number" const_name="bWifi4On" init_value="0">WLAN 4 E/A</input>
+				<input type="string" const_name="sHSIp" init_value="">1: HS IP</input>
+				<input type="string" const_name="sUId" init_value="">1: Benutzer</input>
+                <input type="string" const_name="sPW" init_value="">1: Passwort</input>				
+				<input type="number" const_name="bWifi1On" init_value="0">2: WLAN 1 E/A</input>
+				<input type="number" const_name="bWifi2On" init_value="0">2: WLAN 2 E/A</input>		
+				<input type="number" const_name="bWifi3On" init_value="0">2: WLAN 3 E/A</input>
+				<input type="number" const_name="bWifiGuestOn" init_value="0">2: Gast-WLAN E/A</input>
+				<input type="string" const_name="sMac1" init_value="">3: MAC-Addr 1</input>
+				<input type="string" const_name="sMac2" init_value="">3: MAC-Addr 2</input>
+				<input type="string" const_name="sMac3" init_value="">3: MAC-Addr 3</input>
+				<input type="string" const_name="sMac4" init_value="">3: MAC-Addr 4</input>
+				<input type="string" const_name="sTelNo" init_value="">4: Rufnummer</input>
+				<input type="number" const_name="bDial" init_value="0">4: Dial/Hang-Up (1/0)</input>
             </inputs>
             <outputs>
-				<output type="string" const_name="sWifi1SSID" init_value="">SSID WLAN 1</output>			
-				<output type="number" const_name="bRmWlan1OnOff" init_value="0">RM WLAN 1 E/A</output>
-				<output type="string" const_name="sWifi2SSID" init_value="">SSID WLAN 2</output>			
-				<output type="number" const_name="bRmWlan2OnOff" init_value="0">RM WLAN 2 E/A</output>			
-				<output type="string" const_name="sWifi3SSID" init_value="">SSID WLAN 3</output>			
-				<output type="number" const_name="bRmWlan3OnOff" init_value="0">RM WLAN 3 E/A</output>		
-				<output type="string" const_name="sWifi4SSID" init_value="">SSID WLAN 4</output>			
-				<output type="number" const_name="bRmWlan4OnOff" init_value="0">RM WLAN 4 E/A</output>						
+				<output type="string" const_name="sWifi1SSID" init_value="">2: SSID WLAN 1</output>			
+				<output type="number" const_name="bRmWlan1OnOff" init_value="0">2: RM WLAN 1 E/A</output>
+				<output type="string" const_name="sWifi2SSID" init_value="">2: SSID WLAN 2</output>			
+				<output type="number" const_name="bRmWlan2OnOff" init_value="0">2: RM WLAN 2 E/A</output>			
+				<output type="string" const_name="sWifi3SSID" init_value="">2: SSID WLAN 3</output>			
+				<output type="number" const_name="bRmWlan3OnOff" init_value="0">2: RM WLAN 3 E/A</output>		
+				<output type="string" const_name="sWifiGuestSSID" init_value="">2: SSID Gast-WLAN</output>			
+				<output type="number" const_name="bRmWlanGuestOnOff" init_value="0">2: RM Gast-WLAN 4 E/A</output>
+				<output type="number" const_name="sMac1Avail" init_value="0">3: MAC-Addr 1 angem.</output>
+				<output type="number" const_name="sMac2Avail" init_value="0">3: MAC-Addr 2 angem.</output>
+				<output type="number" const_name="sMac3Avail" init_value="0">3: MAC-Addr 3 angem.</output>
+				<output type="number" const_name="sMac4Avail" init_value="0">3: MAC-Addr 4 angem.</output>				
             </outputs>
 			<remanent_variables>
             </remanent_variables>
