@@ -7,6 +7,7 @@ import socket
 import struct
 import hashlib
 import threading
+import json
 
 ##!!!!##################################################################################################
 #### Own written code can be placed above this commentblock . Do not change or delete commentblock! ####
@@ -32,7 +33,8 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.PIN_I_SMAC4=11
         self.PIN_I_STELNO=12
         self.PIN_I_BDIAL=13
-        self.PIN_I_NUPDATERATE=14
+        self.PIN_I_NSOAPJSON=14
+        self.PIN_I_NUPDATERATE=15
         self.PIN_O_SWIFI1SSID=1
         self.PIN_O_BRMWLAN1ONOFF=2
         self.PIN_O_SWIFI2SSID=3
@@ -45,6 +47,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.PIN_O_SMAC2AVAIL=10
         self.PIN_O_SMAC3AVAIL=11
         self.PIN_O_SMAC4AVAIL=12
+        self.PIN_O_SSOAPRPLY=13
         self.FRAMEWORK._run_in_context_thread(self.on_init)
 
 ########################################################################################################
@@ -331,7 +334,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                     self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
                 
-                elif nWifiIdx == self.m_guestWifiIdx:
+                if nWifiIdx == self.m_guestWifiIdx:
                     self._set_output_value(self.PIN_O_BRMWLANGUESTONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFIGUESTSSID, data["NewSSID"])
             ###End Wifi
@@ -424,13 +427,13 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
             if (index == self.PIN_I_BWIFI1ON):
                 nWifiIdx = 1
                 
-            elif (index== self.PIN_I_BWIFI2ON):
+            elif (index == self.PIN_I_BWIFI2ON):
                 nWifiIdx = 2
                 
-            elif (index== self.PIN_I_BWIFI3ON):
+            elif (index == self.PIN_I_BWIFI3ON):
                 nWifiIdx = 3
     
-            elif (index==self.PIN_I_BWIFIGUESTON):
+            elif (index ==self.PIN_I_BWIFIGUESTON):
                 nWifiIdx = self.m_guestWifiIdx
 
             serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:WLANConfiguration:" + str(nWifiIdx))
@@ -439,33 +442,37 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
             attrList = {"NewEnable" : str(bWifiOn)}
             self.DEBUG.add_message("14102 WIFI SOLL: idx " + str(nWifiIdx) + ", status " + str(bWifiOn))
             data = self.setSoapAction(self.m_url_parsed, serviceData, "SetEnable", attrList)
-    
+
             #get wifi status
-            attrList = {} #{"NewEnable":"", "NewStatus":"", "NewSSID":""}
+            attrList = {}
             data = self.setSoapAction(self.m_url_parsed, serviceData, "GetInfo", attrList)
+            self.DEBUG.set_value("14102 SOAP Repl.", str(data))
 
             nOn = int(((data["NewStatus"] == "Up") and (data["NewEnable"] == '1')))
-            
-            self.DEBUG.add_message("14102 WIFI IST: idx " + str(nWifiIdx) + ", status " + str(nOn))
-    
-            if nWifiIdx == 1:
-                self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
-                self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
-            
-            elif nWifiIdx == 2:
-                self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, nOn)
-                self._set_output_value(self.PIN_O_SWIFI2SSID, data["NewSSID"])
-    
-            elif nWifiIdx == 3:
-                self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
-                self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
-            
-            elif nWifiIdx == self.m_guestWifiIdx:
+
+
+            if (nWifiIdx == self.m_guestWifiIdx):
                 self._set_output_value(self.PIN_O_BRMWLANGUESTONOFF, nOn)
                 self._set_output_value(self.PIN_O_SWIFIGUESTSSID, data["NewSSID"])
-                
+                self.DEBUG.add_message("RM Guest Wifi")
+
+            if (nWifiIdx == 1):
+                self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
+                self.DEBUG.add_message("RM Wifi 1")
+
+            elif (nWifiIdx == 2):
+                self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFI2SSID, data["NewSSID"])
+                self.DEBUG.add_message("RM Wifi 2")
+
+            elif (nWifiIdx == 3):
+                self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
+                self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
+                self.DEBUG.add_message("RM Wifi 3")
+
         ###End Wifi
-        
+
         elif (index == self.PIN_I_SMAC1 or index == self.PIN_I_SMAC2 or index == self.PIN_I_SMAC3 or index == self.PIN_I_SMAC4):
             serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:Hosts:1")
 
@@ -497,3 +504,20 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 attrList = {}
                 data = self.setSoapAction(self.m_url_parsed, serviceData, "X_AVM-DE_DialHangup", attrList)
         ### end dial / call
+        
+        ### generic soap request
+        elif (index == self.PIN_I_NSOAPJSON):
+            # e.g.: '{"serviceType":"urn:dslforum-org:service:WLANConfiguration:1", "action_name":"SetEnable","argumentList":{"NewEnable":"1"}}'
+            soapJson = self._get_input_value(self.PIN_I_NSOAPJSON)
+
+            if soapJson:
+                soapJson = soapJson.replace("&quot;", '"')
+                res = json.loads(soapJson)
+                serviceType = res["serviceType"]
+                action_name = res["action_name"]
+                argumentList = res ["argumentList"]
+
+                serviceData = self.getServiceData(self.m_sServiceDscr, serviceType)
+                data = self.setSoapAction(self.m_url_parsed, serviceData, action_name, argumentList)
+
+                self._set_output_value(self.PIN_O_SSOAPRPLY, str(data))

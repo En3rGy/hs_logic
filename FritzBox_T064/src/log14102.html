@@ -16,7 +16,7 @@ second physical access point support 2.4 GHz and 5 GHz, one more service is list
 (service #3).  If the device supports a logical Access Point for guests, one more service is 
 listed (service #2, #3 or #4).</i></p>
 <h3>3: Anwesenheitserkennung</h3>
-Über die Ein-/Ausgänge kann für Geräte Anhand ihrer MAC Addresse festgestellt werden, ob sie an der Fritz!Box angemeldet sind.</p> 
+Über die Ein-/Ausgänge kann für Geräte Anhand ihrer MAC Adresse festgestellt werden, ob sie an der Fritz!Box angemeldet sind.</p> 
 <h3>4: Wählhilfe</h3>
 <p>Zur Nutzung der Anruf-Funktion muss die Wahlhilfe aktiviert sein (Telefonie - Anrufe - Wählhilfe). 
 Die Anruffunktion stellt dabei eine Verbindung her, zwischen dem Telefon, welches unter "Wählhilfe" 
@@ -33,7 +33,7 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
  </tr>
   <tr>
   <td>Gültigkeit der Hilfe:</td>
-  <td>Bausteinversion 0.02</td>
+  <td>Bausteinversion 0.4</td>
  </tr>
 </table>
 
@@ -51,7 +51,7 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
   <td rowspan="3">1</td>
   <td>HS IP</td>
   <td></td>
-  <td>IP des Homeservers über die eine Verbindung zur Fritz!Box aufgebaut wird.</td>
+  <td>IP des <b>Homeservers</b> über die eine Verbindung zur Fritz!Box aufgebaut wird.</td>
  </tr>
  <tr>
   <td>Benutzer</td>
@@ -87,10 +87,10 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
   <td></td>
   <td rowspan="4">MAC-Adresse zur Anwesenheitserkennung. 
   Die Anwesenheitsprüfung wird ausgeführt, wenn der Eingang geschrieben wird. 
-  Die MAC-Adresse muss im Format ab:cd:ef:gh:ij:kl angegeben werden.</td>
+  Die MAC-Adresse muss im Format <code>ab:cd:ef:gh:ij:kl</code> angegeben werden.</td>
  </tr>
  <tr> 
-  <td>3: MAC-Addr 2</td>
+  <td>MAC-Addr 2</td>
   <td></td>
  </tr>
  <tr> 
@@ -111,7 +111,22 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
   <td>Dial/Hang-Up (1/0)</td>
   <td>0</td>
   <td>Wählt die Nummer bei 1, beendet die Verbindung bei 0</td>
+ </tr>
+ <tr> 
+  <td>5</td>
+  <td>Gen. SOAP Aktion</td>
+  <td></td>
+  <td>Über diesen Eingang können beliebige SOAP Aktionen an die Fritz!Box übermittelt werden.<br>
+      Der Aktionsaufruf muss dabei wie folgt gebildet werden: <code>{"serviceType":"urn:dslforum-org:service:WLANConfiguration:1", "action_name":"SetEnable","argumentList":{"NewEnable":"1"}}</code><br>
+	  Da über den HS keine " eingegeben werden können, müssen diese html encodiert werden. Hierbei muss wie folgt ersetzt werden: " &ensp; = &ensp; <i>&#38;quot;</i>.
+  </td>
  </tr>   
+ <tr> 
+  <td>6</td>
+  <td>Update-Rate (s)</td>
+  <td>0</td>
+  <td>Intervall, in dem die FritzBox nach Statusinformationen abgefragt wird in Sekunden; bei einem Wert =0 findet <b>keine</b> zyklische Abfrage statt </td>
+ </tr>  
 </table>
 
 <h2>Ausgänge</h2>
@@ -123,46 +138,40 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
   <td><b>Initwert</b></td>
   <td><b>Beschreibung</b></td>
  </tr>
- <tr>
   <td rowspan="8">2</td>
-  <td>SSID WLAN 1</td>
-  <td></td>
-  <td>###</td>
- </tr>
- <tr>
   <td>RM WLAN 1 E/A</td>
   <td>0</td>
-  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 1 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
- </tr>
- <tr>
-  <td>SSID WLAN 2</td>
-  <td></td>
-  <td>###</td>
+  <td rowspan="4">Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
  </tr>
  <tr>
   <td>RM WLAN 2 E/A</td>
   <td>0</td>
-  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 2 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
- </tr>
- <tr>
-  <td>SSID WLAN 3</td>
-  <td></td>
-  <td>###</td>
  </tr>
  <tr>
   <td>RM WLAN 3 E/A</td>
   <td>0</td>
-  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 3 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
+ </tr>
+ <tr>
+  <td>RM Gast-WLAN</td>
+  <td>0</td>
+ </tr>  
+ <tr>
+  <td>SSID WLAN 1</td>
+  <td></td>
+  <td rowspan="4">SSID des jew. WLAN Signals.</td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 2</td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SSID WLAN 3</td>
+  <td></td>
  </tr>
  <tr>
   <td>SSID Gast-WLAN</td>
   <td></td>
-  <td>###</td>
  </tr>
-  <td>RM Gast-WLAN</td>
-  <td>0</td>
-  <td>Rückmeldung des Ein-/Aus-Zustandes (1/0) des WLAN 2 Signals. Hierzu wird der Status (Up/Deactivated) mit dem Enabled-Signal (1/0) kombiniert.</td>
- </tr> 
  <tr>
   <td rowspan="4">3</td> 
   <td>MAC-Addr 1 angem.</td>
@@ -180,7 +189,13 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
  <tr>
   <td>MAC-Addr 4 angem.</td>
   <td>0</td>
- </tr> 
+ </tr>
+<tr>
+  <td>5</td>
+  <td>Gen. Soap Antw.</td>
+  <td></td>
+  <td>Antwort auf die generische Anfrage</td>
+</tr> 
 </table>
 
 <h2>Sonstiges</h2>
@@ -201,6 +216,8 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
   <li>v0.04
     <ul>
 	  <li>Timer zur Intervall-Abfrage der Statusinformationen</li>
+	  <li>Ein-/Ausgänge für generische SOAP Requests</li>
+	  <li>Fix: Bei unter 4 WLAN Signalen wird der Status des Gast-WLAN nicht auf dem Ausgang Gast-WLAN ausgegeben, sondern auf dem höchsten Index, z.B. WLAN 3</li>
 	</ul>
   </li>
   <li>v0.03
@@ -213,7 +230,7 @@ in der Fritz!Box-Oberfläche konfiguriert ist und der Nummer, die dem Baustein üb
     <ul>
 	  <li>Anwesenheitserkennung</li>
 	  <li>Wählhilfe</li>
-	  <li>Autmatische Erkennung Gast-WLAN</li>
+	  <li>Automatische Erkennung Gast-WLAN</li>
 	</ul>
   </li>
   <li>v0.01

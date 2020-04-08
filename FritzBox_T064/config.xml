@@ -16,7 +16,8 @@
 				<input type="string" const_name="sMac4" init_value="">3: MAC-Addr 4</input>				
 				<input type="string" const_name="sTelNo" init_value="">4: Rufnummer</input>
 				<input type="number" const_name="bDial" init_value="0">4: Dial/Hang-Up (1/0)</input>
-				<input type="number" const_name="nUpdateRate" init_value="0">5: Update-Rate (s)</input>				
+				<input type="string" const_name="nSoapJson" init_value="">5: Gen. SOAP Aktion</input>
+				<input type="number" const_name="nUpdateRate" init_value="0">6: Update-Rate (s)</input>				
             </inputs>
             <outputs>
 				<output type="string" const_name="sWifi1SSID" init_value="">2: SSID WLAN 1</output>			
@@ -30,7 +31,8 @@
 				<output type="number" const_name="sMac1Avail" init_value="0">3: MAC-Addr 1 angem.</output>
 				<output type="number" const_name="sMac2Avail" init_value="0">3: MAC-Addr 2 angem.</output>
 				<output type="number" const_name="sMac3Avail" init_value="0">3: MAC-Addr 3 angem.</output>
-				<output type="number" const_name="sMac4Avail" init_value="0">3: MAC-Addr 4 angem.</output>				
+				<output type="number" const_name="sMac4Avail" init_value="0">3: MAC-Addr 4 angem.</output>
+				<output type="string" const_name="sSoapRply" init_value="0">5: Gen. Soap Antw.</output>					
             </outputs>
 			<remanent_variables>
             </remanent_variables>
