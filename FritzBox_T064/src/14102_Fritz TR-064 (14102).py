@@ -200,6 +200,43 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         return response_data
 
 
+    def init_com(self):
+        self.m_sUId = self._get_input_value(self.PIN_I_SUID)
+        self.m_sPw = self._get_input_value(self.PIN_I_SPW)
+        sHsIP = self._get_input_value(self.PIN_I_SHSIP)
+
+        if self.m_url_parsed == "":
+            self.m_url_parsed = self.discover(sHsIP)
+            #print "Discovery: \t" + url_parsed.geturl()
+
+            if(not self.m_url_parsed):
+                self.DEBUG.add_message("14102 Could not discover Frtz!Box")
+                #print "No data to continue. Quitting."
+                return False
+
+            self.m_sServiceDscr = self.getData(self.m_url_parsed.geturl())
+            self.getGuestWifiIdx()
+
+            self.m_url_parsed = urlparse.urlparse(self.m_url_parsed.scheme + "://" + self.m_url_parsed.netloc)
+            self.DEBUG.add_message("14102 Fritz!Box URL: " + self.m_url_parsed.geturl())
+
+            # work with device info
+            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:DeviceInfo:1")
+
+            # get security port
+            data = self.setSoapAction(self.m_url_parsed, serviceData, "GetSecurityPort", {})
+
+            if not 'NewSecurityPort' in data:
+                self.DEBUG.add_message("14102 Could retrieve security port from Fritz!Box")
+            else:
+                sSPort = data['NewSecurityPort']
+                url = 'https://' + self.m_url_parsed.hostname + ":" + sSPort
+                self.m_url_parsed = urlparse.urlparse(url)
+                self.DEBUG.add_message("14102 Fritz!Box URL: " + self.m_url_parsed.geturl())
+
+        return True
+
+
     def getSoapHeader(self):
         sHeader = ""
         
@@ -311,7 +348,9 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         
         nInterval = self._get_input_value(self.PIN_I_NUPDATERATE)
         if (nInterval > 0):
-            
+            if not self.init_com():
+                return
+
             #work with wifi
             for nWifiIdx in range(1, (self.m_guestWifiIdx + 1)):
                 serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:WLANConfiguration:" + str(nWifiIdx))
@@ -319,21 +358,21 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 #get wifi status
                 attrList = {} #{"NewEnable":"", "NewStatus":"", "NewSSID":""}
                 data = self.setSoapAction(self.m_url_parsed, serviceData, "GetInfo", attrList)
-    
+
                 nOn = int(((data["NewStatus"] == "Up") and (data["NewEnable"] == '1')))
-        
+
                 if nWifiIdx == 1:
                     self._set_output_value(self.PIN_O_BRMWLAN1ONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFI1SSID, data["NewSSID"])
-                
+
                 elif nWifiIdx == 2:
                     self._set_output_value(self.PIN_O_BRMWLAN2ONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFI2SSID, data["NewSSID"])
-        
+
                 elif nWifiIdx == 3:
                     self._set_output_value(self.PIN_O_BRMWLAN3ONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFI3SSID, data["NewSSID"])
-                
+
                 if nWifiIdx == self.m_guestWifiIdx:
                     self._set_output_value(self.PIN_O_BRMWLANGUESTONOFF, nOn)
                     self._set_output_value(self.PIN_O_SWIFIGUESTSSID, data["NewSSID"])
@@ -353,7 +392,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 nRet = 0
                 if (data):
                     nRet = int(data["NewActive"])
-    
+
                 if (i == self.PIN_I_SMAC1):
                     self._set_output_value(self.PIN_O_SMAC1AVAIL, nRet)
                 elif (i == self.PIN_I_SMAC2):
@@ -363,12 +402,13 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
                 elif (i == self.PIN_I_SMAC4):
                     self._set_output_value(self.PIN_O_SMAC4AVAIL, nRet)
             ### end mac discovery
-            
+
             t = threading.Timer(nInterval, self.updateStatus).start()
 
 
     def on_init(self):
         self.DEBUG = self.FRAMEWORK.create_debug_section()
+        self.updateStatus()
 
 
     def on_input_value(self, index, value):
@@ -387,34 +427,8 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         if (index == self.PIN_I_SUID or index == self.PIN_I_SPW):
             return
 
-        if self.m_url_parsed == "":
-            self.m_url_parsed = self.discover(sHsIP)
-            #print "Discovery: \t" + url_parsed.geturl()
-
-            if(not self.m_url_parsed):
-                self.DEBUG.add_message("14102 Could not discover Frtz!Box")
-                #print "No data to continue. Quitting."
-                return
-
-            self.m_sServiceDscr = self.getData(self.m_url_parsed.geturl())
-            self.getGuestWifiIdx()
-
-            self.m_url_parsed = urlparse.urlparse(self.m_url_parsed.scheme + "://" + self.m_url_parsed.netloc)
-            self.DEBUG.add_message("14102 Fritz!Box URL: " + self.m_url_parsed.geturl())
-
-            # work with device info
-            serviceData = self.getServiceData(self.m_sServiceDscr, "urn:dslforum-org:service:DeviceInfo:1")
-
-            # get security port
-            data = self.setSoapAction(self.m_url_parsed, serviceData, "GetSecurityPort", {})
-
-            if not 'NewSecurityPort' in data:
-                self.DEBUG.add_message("14102 Could retrieve security port from Fritz!Box")
-            else:
-                sSPort = data['NewSecurityPort']
-                url = 'https://' + self.m_url_parsed.hostname + ":" + sSPort
-                self.m_url_parsed = urlparse.urlparse(url)
-                self.DEBUG.add_message("14102 Fritz!Box URL: " + self.m_url_parsed.geturl())
+        if not self.init_com():
+            return
 
         if (index == self.PIN_I_NUPDATERATE):
             if (nInterval > 0):
