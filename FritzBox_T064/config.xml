@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.4">
+        <module category="Datenaustausch" context="hsl20_3_FritzBox" id="14102" name="Fritz TR-064 (14102)" version="0.5">
             <inputs>
-				<input type="string" const_name="sHSIp" init_value="">1: HS IP</input>
 				<input type="string" const_name="sUId" init_value="">1: Benutzer</input>
                 <input type="string" const_name="sPW" init_value="">1: Passwort</input>				
 				<input type="number" const_name="bWifi1On" init_value="0">2: WLAN 1 E/A</input>

@@ -20,21 +20,20 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         hsl20_3.BaseModule.__init__(self, homeserver_context, "hsl20_3_FritzBox")
         self.FRAMEWORK = self._get_framework()
         self.LOGGER = self._get_logger(hsl20_3.LOGGING_NONE,())
-        self.PIN_I_SHSIP=1
-        self.PIN_I_SUID=2
-        self.PIN_I_SPW=3
-        self.PIN_I_BWIFI1ON=4
-        self.PIN_I_BWIFI2ON=5
-        self.PIN_I_BWIFI3ON=6
-        self.PIN_I_BWIFIGUESTON=7
-        self.PIN_I_SMAC1=8
-        self.PIN_I_SMAC2=9
-        self.PIN_I_SMAC3=10
-        self.PIN_I_SMAC4=11
-        self.PIN_I_STELNO=12
-        self.PIN_I_BDIAL=13
-        self.PIN_I_NSOAPJSON=14
-        self.PIN_I_NUPDATERATE=15
+        self.PIN_I_SUID=1
+        self.PIN_I_SPW=2
+        self.PIN_I_BWIFI1ON=3
+        self.PIN_I_BWIFI2ON=4
+        self.PIN_I_BWIFI3ON=5
+        self.PIN_I_BWIFIGUESTON=6
+        self.PIN_I_SMAC1=7
+        self.PIN_I_SMAC2=8
+        self.PIN_I_SMAC3=9
+        self.PIN_I_SMAC4=10
+        self.PIN_I_STELNO=11
+        self.PIN_I_BDIAL=12
+        self.PIN_I_NSOAPJSON=13
+        self.PIN_I_NUPDATERATE=14
         self.PIN_O_SWIFI1SSID=1
         self.PIN_O_BRMWLAN1ONOFF=2
         self.PIN_O_SWIFI2SSID=3
@@ -97,7 +96,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
 
 
     # @return urlparse
-    def discover(self, p_sHsIP):
+    def discover(self):
 
         #SSDP request msg from application
         MCAST_MSG = ('M-SEARCH * HTTP/1.1\r\n' +
@@ -108,6 +107,9 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
 
         MCAST_GRP = '239.255.255.250'
         MCAST_PORT = 1900
+        
+        # hsl20_3.Framework.get_homeserver_private_ip
+        sHsIp = self.FRAMEWORK.get_homeserver_private_ip()
 
         #for addr in self.interface_addresses():
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -117,7 +119,7 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         
         # specify interface to use for multicast msg
-        sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(p_sHsIP))
+        sock.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(sHsIp))
 
         sock.settimeout(1)
 
@@ -203,10 +205,9 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
     def init_com(self):
         self.m_sUId = self._get_input_value(self.PIN_I_SUID)
         self.m_sPw = self._get_input_value(self.PIN_I_SPW)
-        sHsIP = self._get_input_value(self.PIN_I_SHSIP)
 
         if self.m_url_parsed == "":
-            self.m_url_parsed = self.discover(sHsIP)
+            self.m_url_parsed = self.discover()
             #print "Discovery: \t" + url_parsed.geturl()
 
             if(not self.m_url_parsed):
@@ -416,7 +417,6 @@ class FritzTR_064_14102_14102(hsl20_3.BaseModule):
         self.m_sUId = self._get_input_value(self.PIN_I_SUID)
         self.m_sPw = self._get_input_value(self.PIN_I_SPW)
         nWifiIdx = 0
-        sHsIP = self._get_input_value(self.PIN_I_SHSIP)
         nInterval = self._get_input_value(self.PIN_I_NUPDATERATE)
         ############################################
         
