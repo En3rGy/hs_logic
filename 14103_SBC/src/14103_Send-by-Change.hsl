@@ -44,6 +44,11 @@
 ########################################################################################################
 
 ### Changelog ###
+# v0.5
+# - do not send '0' during init
+# - fix: doesn's send value if new val is < than old one
+# v0.4
+# 
 # v0.3
 # - check for "no change"
 # v0.2
@@ -51,33 +56,32 @@
 # v0.1
 # - Initial
 
-5000|"Filter\Send-by-Change (14103)"|0|2|"E1 Wert"|"E2 Mind. %-Änderung"|1|"A1 Wert"|"V 0.4"
+5000|"Filter\Send-by-Change (14103)"|0|2|"E1 Wert"|"E2 Mind. %-Änderung"|1|"A1 Wert"|"V0.5"
 
-5001|2|1|0|1|1
+5001|2|1|0|2|1
 
 # EN[x]
 5002|1|0|0 ## value
 5002|2|10|0 ## prc
 
 # SN[x]
-5003|1|0|0
+5003|1|0|0 # last value
+5003|1|0|0 # received 1st value
 
 # Ausgänge
 5004|1|0|0|1|0  ## Result
 
 #################################################
 
-# Init
-5012|0|"EI"|"EN[1]"|""|1|0|1|0
+# 1st value
+5012|0|"EC[1]<>0 and (SN[2] == 0)"|"EN[1]"|""|1|0|1|0
+5012|0|"EC[1]<>0 and (SN[2] == 0)"|"1"|""|1|0|2|0
 
 # no change
-5012|1|"EC[1]<>0 and ( SN[1] == EN[1])"|"EN[1]"|""|0|0|0|0
-
-# Bei 0% nur check auf Änderung
-5012|0|"EC[1]<>0 and EN[2]==0 and ( SN[1] <> EN[1])"|"EN[1]"|""|0|0|0|0
+5012|1|"EC[1]<>0 and SN[2] and (SN[1] == EN[1])"|"EN[1]"|""|0|0|0|0
 
 # pos diff
-5012|1|"EC[1]<>0 and (( SN[1] * ( 1 + EN[2]/100.0) ) < EN[1])"|"EN[1]"|""|1|0|1|0
+5012|0|"EC[1]<>0 and SN[2] and ((SN[1] * (1 + EN[2]/100.0)) < EN[1])"|"EN[1]"|""|1|0|1|0
 
 #neg diff
-5012|1|"EC[1]<>0 and (( SN[1] * ( 1 - EN[2]/100.0) ) > EN[1])"|"EN[1]"|""|1|0|1|0
+5012|0|"EC[1]<>0 and SN[2] and ((SN[1] * (1 - EN[2]/100.0)) > EN[1])"|"EN[1]"|""|1|0|1|0
