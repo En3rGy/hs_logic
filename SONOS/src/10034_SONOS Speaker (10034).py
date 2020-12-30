@@ -37,14 +37,14 @@ class SONOSSpeaker_10034_10034(hsl20_3.BaseModule):
             httpClient.request("POST", api_path, payload, headers)
             response = httpClient.getresponse()
             status = response.status
-            self.DEBUG.set_value('data', response.read())
-            self.DEBUG.set_value('status', status)
+            #self.DEBUG.set_value('10034 response', response.read())
+            self.DEBUG.set_value('10034 status', status)
             if str(status) != '200':
                 return False
             else:
                 return True
         except Exception as e:
-            print(e)
+            self.DEBUG.add_message("10034: " + str(e))
             #data = {'status':500,'auth':'failed'}
             return False
         finally:
@@ -195,4 +195,4 @@ class SONOSSpeaker_10034_10034(hsl20_3.BaseModule):
         elif (index == self.PIN_I_SJOINRINCON):
             res = self.joinRincon(sIp, nPort, self._get_input_value(self.PIN_I_SJOINRINCON))
 
-        self.DEBUG.set_value("Result", res) 
+        self.DEBUG.set_value("10034 index/success", str(index) + "/" + str(res)) 

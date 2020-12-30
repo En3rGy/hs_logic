@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <modules>
-        <module category="Sonos" context="hsl20_3_SonosSpeaker" id="10034" name="SONOS Speaker (10034)" version="0.4">
+        <module category="Sonos" context="hsl20_3_SonosSpeaker" id="10034" name="SONOS Speaker (10034)" version="0.5">
             <inputs>
                 <input type="string" const_name="sSpeakerIp" init_value="">Speaker IP</input>
                 <input type="number" const_name="nSpeakerPort" init_value="1400">Speaker Port</input>
